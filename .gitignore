@@ -1,30 +1,65 @@
-# Build output
+## .gitignore for modern .NET projects
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
 [Bb]in/
 [Oo]bj/
+[Ll]og/
+[Ll]ogs/
 build-check/
 
-# User-specific files
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+packages/
+
+# Visual Studio and user files
+.vs/
+.vscode/
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
-.vs/
-.vscode/
+
+# dotenv environment variables file
+.env
+
+# Others
+~$*
+*~
+Thumbs.db
+Desktop.ini
+.DS_Store
 
 # Test results and coverage
+[Tt]est[Rr]esult*/
 TestResults/
 *.trx
 coverage/
 coverage.cobertura.xml
+CodeCoverage/
 
-# NuGet
-*.nupkg
-packages/
+# NUnit
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
 
-# Logs
-*.log
-
-# OS files
-Thumbs.db
-Desktop.ini
-.DS_Store
+# MSBuild Binary and Structured Log
+*.binlog
