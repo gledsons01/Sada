@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Test/">
+    <Project Path="../Sada.Api.Business.Test/Sada.Api.Business.Test/Sada.Api.Business.Test.csproj" Id="b985efd9-3962-47bd-bf9a-748f2232f79b" />
+    <Project Path="../Sada.Application.Test/Sada.Application.Test/Sada.Application.Test.csproj" Id="92e7c47c-25bd-4fef-b61f-a5abde75773f" />
+    <Project Path="../Sada.Entity.Test/Sada.Entity.Test/Sada.Entity.Test.csproj" Id="5869434d-3cf8-4171-b6d2-78b8fca16f3b" />
+  </Folder>
+  <Project Path="../Sada.Api.Business/Sada.Api.Business/Sada.Api.Business.csproj" />
+  <Project Path="../Sada.Api.Entity/Sada.Api.Entity/Sada.Api.Entity.csproj" Id="27542999-6330-4526-b7ea-b541cd4468a4" />
+  <Project Path="Sada.Application.csproj" />
+</Solution>
