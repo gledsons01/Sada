@@ -6,5 +6,6 @@
   </Folder>
   <Project Path="../Sada.Api.Business/Sada.Api.Business/Sada.Api.Business.csproj" />
   <Project Path="../Sada.Api.Entity/Sada.Api.Entity/Sada.Api.Entity.csproj" Id="27542999-6330-4526-b7ea-b541cd4468a4" />
+  <Project Path="../Sada.Api.Queue/Sada.Api.Queue/Sada.Api.Queue.csproj" Id="763eca4e-414e-4833-a2e8-abceb4e5e0b6" />
   <Project Path="Sada.Application.csproj" />
 </Solution>
