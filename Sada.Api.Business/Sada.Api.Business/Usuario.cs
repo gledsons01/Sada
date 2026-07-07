@@ -3,7 +3,6 @@ using Sada.Api.Business.Interface;
 using Sada.Api.Entity.Interface;
 using Sada.Api.Entity.Model.Request;
 using Sada.Api.Entity.Model.Response;
-using Sada.Api.Entity.Repository;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,7 +14,7 @@ namespace Sada.Api.Business
         private readonly ILogger<Usuario> _logger;
         private readonly IUsuarioRepository _usuarioRepository;
 
-        public Usuario(ILogger<Usuario> logger, UsuarioRepository usuarioRepository)
+        public Usuario(ILogger<Usuario> logger, IUsuarioRepository usuarioRepository)
         {
             _logger = logger;
             _usuarioRepository = usuarioRepository;
@@ -79,7 +78,7 @@ namespace Sada.Api.Business
             return result;
         }
 
-        public async Task<UsuarioModelResponse> LoginUsuario(UsuarioModelRequest model)
+        public async Task<UsuarioModelResponse> LoginUsuario(LoginModelRequest model)
         {
             var result = await _usuarioRepository.LoginUsuario(model);
             if (result is null)

@@ -13,6 +13,6 @@ namespace Sada.Api.Business.Interface
         Task<UsuarioModelResponse?> AlterarUsuario(UsuarioModelRequest model);
         Task<bool> ApagarUsuario(int idUsuario);
         Task<UsuarioModelResponse?> ObterUsuarioPorId(int idUsuario);
-        Task<UsuarioModelResponse> LoginUsuario(UsuarioModelRequest model);        
+        Task<UsuarioModelResponse> LoginUsuario(LoginModelRequest model);        
     }
 }

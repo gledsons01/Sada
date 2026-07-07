@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+ï»¿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Sada.Api.Entity.Context;
 using Sada.Api.Entity.Interface;
@@ -9,9 +9,10 @@ using System.ComponentModel;
 
 namespace Sada.Api.Entity.Repository;
 
-public class UsuarioRepository(SadaDbContext context) : IUsuarioRepository
+public class UsuarioRepository(SadaDbContext context, ILogger<UsuarioRepository> logger) : IUsuarioRepository
 {
     private readonly SadaDbContext _context = context;
+    private readonly ILogger<UsuarioRepository> _logger = logger;
     
     public async Task<UsuarioModelResponse> IncluirUsuarioAsync(UsuarioModelRequest model, CancellationToken cancellationToken = default)
     {
@@ -31,8 +32,8 @@ public class UsuarioRepository(SadaDbContext context) : IUsuarioRepository
             IdUf = model.IdUf ?? 0,
             IdCidade = model.IdCidade ?? 0,
             NomeSocial = model.NomeSocial.Trim(),
-            IdSexo = model.IdSexo,
-            EMail = model.EMail.Trim()
+            ID_SEXO = model.IdSexo,
+            E_MAIL  = model.EMail.Trim()
         };
 
         await _context.Usuarios.AddAsync(entity, cancellationToken);
@@ -47,25 +48,33 @@ public class UsuarioRepository(SadaDbContext context) : IUsuarioRepository
 
     public async Task<List<UsuarioModelResponse>> ListarUsuariosAsync(CancellationToken cancellationToken = default)
     {
-        return await _context.Usuarios
-            .OrderBy(item => item.IdUsuario)
-            .Select(item => new UsuarioModelResponse
-            {
-                IdUsuario = item.IdUsuario,
-                NomeUsuario = item.NomeUsuario,
-                Login = item.Login,
-                Senha = item.Senha,
-                Endereco = item.Endereco,
-                NumeroEndereco = item.NumeroEndereco,
-                Bairro = item.Bairro,
-                IdUf = item.IdUf,
-                IdCidade = item.IdCidade,
-                NomeSocial = item.NomeSocial,
-                IdSexo = item.IdSexo,
-                EMail = item.EMail,
-                blnRetorno = true
-            })
-            .ToListAsync(cancellationToken);
+        try
+        {
+            return await _context.Usuarios
+                .OrderBy(item => item.IdUsuario)
+                .Select(item => new UsuarioModelResponse
+                {
+                    IdUsuario = item.IdUsuario,
+                    NomeUsuario = item.NomeUsuario,
+                    Login = item.Login,
+                    Senha = item.Senha,
+                    Endereco = item.Endereco,
+                    NumeroEndereco = item.NumeroEndereco,
+                    Bairro = item.Bairro,
+                    IdUf = item.IdUf,
+                    IdCidade = item.IdCidade,
+                    NomeSocial = item.NomeSocial,
+                    IdSexo = item.ID_SEXO,
+                    EMail = item.E_MAIL,
+                    blnRetorno = true
+                })
+                .ToListAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erro ao listar usuarios.");
+            throw;
+        }
     }
 
     public async Task<UsuarioModelResponse?> AlterarUsuarioAsync(UsuarioModelRequest model, CancellationToken cancellationToken = default)
@@ -86,8 +95,8 @@ public class UsuarioRepository(SadaDbContext context) : IUsuarioRepository
         entity.IdUf = model.IdUf ?? 0;
         entity.IdCidade = model.IdCidade ?? 0;
         entity.NomeSocial = model.NomeSocial.Trim();
-        entity.IdSexo = model.IdSexo;
-        entity.EMail = model.EMail.Trim();
+        entity.ID_SEXO = model.IdSexo;
+        entity.E_MAIL = model.EMail.Trim();
         _context.Usuarios.Update(entity);
         await _context.SaveChangesAsync(cancellationToken);
         
@@ -132,25 +141,31 @@ public class UsuarioRepository(SadaDbContext context) : IUsuarioRepository
             IdUf = entity.IdUf,
             IdCidade = entity.IdCidade,
             NomeSocial = entity.NomeSocial,
-            IdSexo = entity.IdSexo,
-            EMail = entity.EMail,
+            IdSexo = entity.ID_SEXO,
+            EMail = entity.E_MAIL,
             blnRetorno = true
         };
     }
 
-    public async Task<UsuarioModelResponse> LoginUsuario(UsuarioModelRequest model, CancellationToken cancellationToken = default)
+    public async Task<UsuarioModelResponse> LoginUsuario(LoginModelRequest model, CancellationToken cancellationToken = default)
     {
+        var login = model.Login?.Trim();
+        var senha = model.Senha?.Trim();
+
         var entity = await _context.Usuarios
-            .FirstOrDefaultAsync(item => item.Login == model.Login && item.Senha == model.Senha, cancellationToken);
+            .FirstOrDefaultAsync(item => item.Senha == senha && item.Login == login, cancellationToken);
 
         if (entity == null)
         {
-            throw new InvalidOperationException("Usuário ou senha inválidos");
+            throw new InvalidOperationException("Usuario ou senha invalidos");
         }
 
         return new UsuarioModelResponse
         {
             IdUsuario = entity.IdUsuario,
+            NomeUsuario = entity.NomeUsuario,
+            Login = entity.Login,
+            EMail = entity.E_MAIL,
             blnRetorno = true
         };
     }

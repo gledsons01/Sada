@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -20,5 +20,9 @@ namespace Sada.Api.Entity.Model.Response
         public string? EMail { get; set; }
         public bool? blnRetornp { get; set; }
         public int? IdSexo { get; set; }
+        public string? Token { get; set; }
+        public DateTime? TokenExpiraEm { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiraEm { get; set; }
     }
 }

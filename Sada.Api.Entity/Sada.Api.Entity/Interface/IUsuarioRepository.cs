@@ -10,5 +10,5 @@ public interface IUsuarioRepository
     Task<UsuarioModelResponse?> AlterarUsuarioAsync(UsuarioModelRequest model, CancellationToken cancellationToken = default);
     Task<bool> ApagarUsuarioAsync(int idUsuario, CancellationToken cancellationToken = default);
     Task<UsuarioModelResponse?> ObterUsuarioPorIdAsync(int idUsuario, CancellationToken cancellationToken = default);
-    Task<UsuarioModelResponse> LoginUsuario(UsuarioModelRequest model, CancellationToken cancellationToken = default);
+    Task<UsuarioModelResponse> LoginUsuario(LoginModelRequest model, CancellationToken cancellationToken = default);
 }

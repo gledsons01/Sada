@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using Sada.Api.Business;
 using Sada.Api.Business.Interface;
 using Sada.Application.Middlewares;
+using Sada.Application.Services;
 
 namespace Sada.Application.Configuration
 {
@@ -17,6 +18,8 @@ namespace Sada.Application.Configuration
 
             services.AddMvc();
             services.AddScoped<ITitulo, Titulo>();
+            services.AddScoped<IUsuario, Usuario>();
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
 
             return services;
         }
