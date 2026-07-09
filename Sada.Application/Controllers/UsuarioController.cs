@@ -30,7 +30,9 @@ namespace Sada.Application.Controllers
             try
             {
                 var result = await _usuarioBusiness.CadastrarUsuario(usuarioModelRequest);
-                return Ok(result);
+                _logger.LogInformation($"Usuario {usuarioModelRequest.NomeUsuario} cadastrado com sucesso.");
+
+                return Created();
             }
             catch (Exception ex)
             {
@@ -45,6 +47,7 @@ namespace Sada.Application.Controllers
             try
             {
                 var result = await _usuarioBusiness.ListUsuarios();
+                _logger.LogInformation("Usuarios listados com sucesso.");
                 return Ok(result);
             }
             catch (Exception ex)
@@ -60,10 +63,14 @@ namespace Sada.Application.Controllers
             try
             {
                 var result = await _usuarioBusiness.ObterUsuarioPorId(id);
+                
                 if (result == null)
                 {
+                    _logger.LogWarning($"Usuario com ID {id} nao encontrado.");
                     return NotFound($"Usuario com ID {id} nao encontrado.");
                 }
+
+                _logger.LogInformation($"Usuario com ID {id} obtido com sucesso.");
                 return Ok(result);
             }
             catch (Exception ex)
@@ -100,8 +107,11 @@ namespace Sada.Application.Controllers
                 var result = await _usuarioBusiness.ApagarUsuario(id);
                 if (!result)
                 {
+                    _logger.LogWarning($"Usuario com ID {id} nao encontrado para exclusao.");
                     return NotFound($"Usuario com ID {id} nao encontrado.");
                 }
+
+                _logger.LogInformation($"Usuario com ID {id} apagado com sucesso.");
                 return Ok($"Usuario com ID {id} apagado com sucesso.");
             }
             catch (Exception ex)
@@ -118,7 +128,7 @@ namespace Sada.Application.Controllers
             {
                 if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(senha))
                 {
-                    _logger.LogError("LoginUsuario() - Email e senha sao obrigatorios.");
+                    _logger.LogWarning("LoginUsuario() - Email e senha sao obrigatorios.");
                     return BadRequest("LoginUsuario() - Email e senha sao obrigatorios.");
                 }
 
@@ -129,7 +139,7 @@ namespace Sada.Application.Controllers
                 var result = await _usuarioBusiness.LoginUsuario(model);
                 if (result == null)
                 {
-                    _logger.LogWarning("LoginUsuario() - Usuario nao encontrado.");
+                    _logger.LogWarning($"Usuario com email {email} nao encontrado ou senha invalida.");
                     return NotFound("Usuario nao encontrado.");
                 }
 
@@ -140,7 +150,7 @@ namespace Sada.Application.Controllers
                     _cacheService.Set($"LoginUsuario:Token:{result.IdUsuario}.", token, new DateTimeOffset(token.TokenExpiraEm.Value));
                 }
 
-                _logger.LogInformation($"LoginUsuario() - Usuario: {result.IdUsuario} - {result.Login} logado com sucesso.");
+                _logger.LogInformation($"Usuario com email {email} logado com sucesso.");
                 return Ok(result);
             }
             catch (Exception ex)
