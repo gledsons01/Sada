@@ -17,7 +17,7 @@ public sealed class JwtTokenService : IJwtTokenService
         _settings = settings.Value;
     }
 
-    public void PreencherTokens(UsuarioModelResponse usuario)
+    public TokenModelResponse PreencherTokens(UsuarioModelResponse usuario)
     {
         var agora = DateTime.UtcNow;
         var tokenExpiraEm = agora.AddMinutes(Math.Max(_settings.AccessTokenMinutes, 1));
@@ -27,6 +27,16 @@ public sealed class JwtTokenService : IJwtTokenService
         usuario.TokenExpiraEm = tokenExpiraEm;
         usuario.RefreshToken = GerarRefreshToken();
         usuario.RefreshTokenExpiraEm = refreshTokenExpiraEm;
+
+        return new TokenModelResponse
+        {
+
+            Token = usuario.Token,
+            IdUsuarioToken = usuario.IdUsuario,
+            TokenExpiraEm = usuario.TokenExpiraEm,
+            RefreshToken = usuario.RefreshToken,
+            RefreshTokenExpiraEm = usuario.RefreshTokenExpiraEm
+        };
     }
 
     private string GerarToken(UsuarioModelResponse usuario, DateTime emitidoEm, DateTime expiraEm)
