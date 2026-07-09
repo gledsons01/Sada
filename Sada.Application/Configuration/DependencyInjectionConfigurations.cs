@@ -14,7 +14,10 @@ namespace Sada.Application.Configuration
             if (configuration == null) throw new ArgumentNullException(nameof(configuration));
 
             services.AddTransient<ExceptionHandlingMiddleware>();
+            services.Configure<CacheSettings>(configuration.GetSection(CacheSettings.SectionName));
             services.AddMemoryCache();
+
+            services.AddSingleton<ICacheService, MemoryCacheService>();
 
             services.AddMvc();
             services.AddScoped<ITitulo, Titulo>();
