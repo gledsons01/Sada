@@ -4,5 +4,5 @@ namespace Sada.Application.Services;
 
 public interface IJwtTokenService
 {
-    void PreencherTokens(UsuarioModelResponse usuario);
+    TokenModelResponse PreencherTokens(UsuarioModelResponse usuario);
 }

@@ -1,11 +1,10 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Sada.Api.Business.Interface;
 using Sada.Api.Entity.Interface;
 using Sada.Api.Entity.Model.Request;
 using Sada.Api.Entity.Model.Response;
 
-namespace Sada.Api.Business.Test;
-
+namespace Sada.Api.Business.Test.Repository;
 public sealed class TituloTests
 {
     [Fact]
@@ -245,9 +244,7 @@ public sealed class TituloTests
         Assert.Contains("Titulo apagado. ID: 12", log.Message);
     }
 
-    private static Sada.Api.Business.Titulo CriarServico(
-        FakeTituloRepository? repository = null,
-        TestLogger<Sada.Api.Business.Titulo>? logger = null)
+    private static Sada.Api.Business.Titulo CriarServico(FakeTituloRepository? repository = null, TestLogger<Sada.Api.Business.Titulo>? logger = null)
     {
         return new Sada.Api.Business.Titulo(
             logger ?? new TestLogger<Sada.Api.Business.Titulo>(),

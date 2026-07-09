@@ -12,13 +12,15 @@ namespace Sada.Application.Controllers
     {
         private readonly IUsuario _usuarioBusiness;
         private readonly IJwtTokenService _jwtTokenService;
+        private readonly ICacheService _cacheService;
         private readonly ILogger<UsuarioController> _logger;
 
-        public UsuarioController(ILogger<UsuarioController> logger, IUsuario usuarioBusiness, IJwtTokenService jwtTokenService)
+        public UsuarioController(ILogger<UsuarioController> logger, IUsuario usuarioBusiness, IJwtTokenService jwtTokenService, ICacheService cacheService)
         {
             _logger = logger;
             _usuarioBusiness = usuarioBusiness;
             _jwtTokenService = jwtTokenService;
+            _cacheService = cacheService;
         }
 
         [HttpPost("cadastrar")]
@@ -141,14 +143,19 @@ namespace Sada.Application.Controllers
                     return NotFound("Usuario nao encontrado.");
                 }
 
-                _jwtTokenService.PreencherTokens(result);
+                var token = _jwtTokenService.PreencherTokens(result);
+                if (token.TokenExpiraEm.HasValue)
+                {
+                    _logger.LogInformation($"LoginUsuario() - Armazenando token no cache para o usuario {result.IdUsuario} com expiracao em {token.TokenExpiraEm.Value}.");
+                    _cacheService.Set($"LoginUsuario:Token:{result.IdUsuario}.", token, new DateTimeOffset(token.TokenExpiraEm.Value));
+                }
 
                 _logger.LogInformation($"Usuario com email {email} logado com sucesso.");
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao fazer login do usuario");
+                _logger.LogError(ex, $"Erro ao fazer login: {ex.Message}.");
                 return StatusCode(500, "Ocorreu um erro ao processar a solicitacao.");
             }
         }
