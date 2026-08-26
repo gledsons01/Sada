@@ -6,4 +6,18 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="src\app\core\" />
+    <Folder Include="src\app\features\titulo\components\" />
+    <Folder Include="src\app\features\titulo\models\" />
+    <Folder Include="src\app\features\titulo\services\" />
+    <Folder Include="src\app\features\titulo\page\" />
+    <Folder Include="src\app\features\usuario\components\" />
+    <Folder Include="src\app\features\usuario\models\" />
+    <Folder Include="src\app\features\usuario\page\" />
+    <Folder Include="src\app\features\usuario\services\" />
+    <Folder Include="src\app\shared\" />
+    <Folder Include="src\environments\" />
+  </ItemGroup>
+
 </Project>
