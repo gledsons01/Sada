@@ -9,5 +9,6 @@
   <Project Path="../Sada.Api.Queue/Sada.Api.Queue/Sada.Api.Queue.csproj" Id="763eca4e-414e-4833-a2e8-abceb4e5e0b6">
     <Build Solution="Debug|*" Project="false" />
   </Project>
+  <Project Path="../Sada.Web/Sada.Web/Sada.Web.csproj" Id="710fd1f7-ced2-4766-b405-bb9c3c3a321a" />
   <Project Path="Sada.Application.csproj" />
 </Solution>
