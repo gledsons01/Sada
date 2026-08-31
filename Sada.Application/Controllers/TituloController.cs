@@ -2,7 +2,6 @@
 using Sada.Api.Entity.Model.Response;
 using Sada.Api.Entity.Model.Request;
 using Sada.Api.Business.Interface;
-using System.Runtime.CompilerServices;
 using System.Globalization;
 
 namespace Sada.Application.Controllers

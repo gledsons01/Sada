@@ -7,17 +7,39 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="src\app\aap.component.ts" />
+    <None Remove="src\app\aap.routes.ts" />
+    <None Remove="src\app\app.config.ts" />
+    <None Remove="src\app\features\titulo\titulo.routes.ts" />
+    <None Remove="src\app\features\titulo\titulo.service.ts" />
+    <None Remove="src\app\features\usuario\usuario.routes.ts" />
+    <None Remove="src\app\features\usuario\usuario.service.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="src\app\core\" />
     <Folder Include="src\app\features\titulo\components\" />
-    <Folder Include="src\app\features\titulo\models\" />
     <Folder Include="src\app\features\titulo\services\" />
-    <Folder Include="src\app\features\titulo\page\" />
+    <Folder Include="src\app\features\titulo\pages\" />
     <Folder Include="src\app\features\usuario\components\" />
-    <Folder Include="src\app\features\usuario\models\" />
-    <Folder Include="src\app\features\usuario\page\" />
+    <Folder Include="src\app\features\usuario\pages\" />
     <Folder Include="src\app\features\usuario\services\" />
     <Folder Include="src\app\shared\" />
     <Folder Include="src\environments\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Sada.Application\Sada.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="src\app\aap.component.ts" />
+    <TypeScriptCompile Include="src\app\aap.routes.ts" />
+    <TypeScriptCompile Include="src\app\app.config.ts" />
+    <TypeScriptCompile Include="src\app\features\titulo\titulo.routes.ts" />
+    <TypeScriptCompile Include="src\app\features\titulo\titulo.service.ts" />
+    <TypeScriptCompile Include="src\app\features\usuario\usuario.routes.ts" />
+    <TypeScriptCompile Include="src\app\features\usuario\usuario.service.ts" />
   </ItemGroup>
 
 </Project>

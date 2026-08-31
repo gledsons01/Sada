@@ -1,0 +1,20 @@
+<p>titulo-lista works!</p>
+
+<table>
+  <thead>
+    <td>Id</td>
+    <td>Nome</td>
+    <td>Observaçao</td>
+    <td><Ações></td>
+  </thead>
+    <tbody>
+      <tr *ngFor="let titulo of titulos">
+        <td>{{titulo.id}}</td>
+        <td>{{titulo.nome}}</td>
+        <td>{{titulo.observacao}}</td>
+        <td>
+          <button class="btn btn-outline-info" (click)="editar(titulo)">Editar</button>
+          <button (click)="excluir(titulo)">Excluir</button>
+        </td>
+      </tr>
+</table>
