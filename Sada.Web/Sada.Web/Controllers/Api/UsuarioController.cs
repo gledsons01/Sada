@@ -6,7 +6,13 @@ namespace Sada.Web.Controllers.Api
     {
         public IActionResult Index()
         {
-            return View();
+            return View("usuario-lista.component.html");
+        }
+
+        [HttpGet("listar-usuarios")]
+        public IActionResult ListarUsuarios()
+        {
+            return Ok("usuario-lista.component.html");
         }
     }
 }

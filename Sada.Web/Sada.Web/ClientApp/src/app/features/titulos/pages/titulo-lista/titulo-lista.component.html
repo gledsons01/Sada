@@ -1,20 +1,71 @@
-<p>titulo-lista works!</p>
+<section class="titulo-lista">
+  <header class="titulo-lista__cabecalho">
+    <h1>Títulos</h1>
+    <button type="button" class="botao botao--primario" (click)="novo()">Novo título</button>
+  </header>
 
-<table>
-  <thead>
-    <td>Id</td>
-    <td>Nome</td>
-    <td>Observaçao</td>
-    <td><Ações></td>
-  </thead>
+  <table class="tabela" *ngIf="titulos.length; else semTitulos">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Nome</th>
+        <th>Observação</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
     <tbody>
       <tr *ngFor="let titulo of titulos">
-        <td>{{titulo.id}}</td>
-        <td>{{titulo.nome}}</td>
-        <td>{{titulo.observacao}}</td>
-        <td>
-          <button class="btn btn-outline-info" (click)="editar(titulo)">Editar</button>
-          <button (click)="excluir(titulo)">Excluir</button>
+        <td>{{ titulo.idtitulo }}</td>
+        <td>{{ titulo.nometitulo }}</td>
+        <td>{{ titulo.descricao }}</td>
+        <td>{{ titulo.datavencimento | date }}</td>
+        <td>{{ titulo.status }}</td>
+        <td class="acoes">
+          <button type="button" class="botao" (click)="editar(titulo)">Editar</button>
+          <button type="button" class="botao botao--perigo" (click)="excluir(titulo)">Excluir</button>
         </td>
       </tr>
-</table>
+    </tbody>
+  </table>
+  <ng-template #semTitulos><p class="sem-titulos">Nenhum título cadastrado.</p></ng-template>
+</section>
+<div class="modal-fundo" *ngIf="modalAberta" (click)="fecharModal()">
+  <section class="titulo-modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo" (click)="$event.stopPropagation()">
+    <header class="titulo-modal__cabecalho">
+      <h2 id="modal-titulo">{{ editando ? 'Editar título' : 'Novo título' }}</h2>
+      <button type="button" class="titulo-modal__fechar" aria-label="Fechar" (click)="fecharModal()">&times;</button>
+    </header>
+
+    <form #formTitulo="ngForm" (ngSubmit)="salvar()">
+
+      <div class="campo">
+        <label for="nometitulo">Titulo </label>
+      <input id="nome" name="nome" [(ngModel)]="tituloEmEdicao.nometitulo" required maxlength="120">
+      </div>
+
+      <div class="campo">
+        <label for="descricao">Descrição:</label>
+        <textarea id="descricao" name="descricao" [(ngModel)]="tituloEmEdicao.descricao" rows="4" maxlength="500"></textarea>
+      </div>
+
+      <div class="campo">
+        <label for="datavencimento">Data de vencimento:</label>
+        <input id="datavencimento" name="datavencimento" type="date" [ngModel]="dataVencimentoTexto" required>
+      </div>
+
+      <div class="campo">
+        <label for="status">Status:</label>
+        <select id="status" name="status" [(ngModel)]="tituloEmEdicao.status" required>
+          <option value="" disabled>Selecione o status</option>
+          <option value="D">Pendente</option>
+          <option value="P">Pago</option>
+          <option value="V">Vencido</option>
+        </select>
+      </div>
+      <footer class="titulo-modal__acoes">
+        <button type="button" class="botao" (click)="fecharModal()">Cancelar</button>
+        <button type="submit" class="botao botao--primario" [disabled]="formTitulo.invalid">Salvar</button>
+      </footer>
+    </form>
+  </section>
+</div>

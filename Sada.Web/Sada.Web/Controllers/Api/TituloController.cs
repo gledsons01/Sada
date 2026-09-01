@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Sada.Web.Controllers.Api
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TituloController : ControllerBase
+    public class TituloController : Controller
     {
         public IActionResult Index()
         {
-            return View();
+            return View("titulo-lista.componente.html");
         }
 
         [HttpGet("listarTitulos")]

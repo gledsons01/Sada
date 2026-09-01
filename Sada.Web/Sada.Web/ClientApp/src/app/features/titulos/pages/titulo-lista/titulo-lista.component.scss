@@ -1,0 +1,148 @@
+:host {
+  display: block;
+  padding: 2rem;
+  color: #1f2937;
+}
+
+.titulo-lista {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.titulo-lista__cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+h1, h2 {
+  margin: 0;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+  .tabela th, .tabela td {
+    padding: .8rem;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+  }
+
+.acoes {
+  display: flex;
+  gap: .5rem;
+}
+
+.botao {
+  border: 1px solid #9ca3af;
+  border-radius: .35rem;
+  background: #fff;
+  color: #1f2937;
+  padding: .5rem .9rem;
+  cursor: pointer;
+}
+
+.botao--primario {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.botao--perigo {
+  border-color: #dc2626;
+  color: #b91c1c;
+}
+
+.botao:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.sem-titulos {
+  padding: 2rem;
+  text-align: center;
+  background: #f9fafb;
+}
+
+.modal-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(17, 24, 39, .55);
+}
+
+.titulo-modal {
+  width: min(100%, 520px);
+  border-radius: .5rem;
+  background: #fff;
+  box-shadow: 0 20px 35px rgba(0, 0, 0, .2);
+}
+
+.titulo-modal__cabecalho, .titulo-modal__acoes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+}
+
+.titulo-modal__cabecalho {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.titulo-modal__fechar {
+  border: 0;
+  background: none;
+  color: #4b5563;
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+form {
+  padding: 1.25rem;
+}
+
+.campo {
+  display: grid;
+  gap: .4rem;
+  margin-bottom: 1rem;
+}
+
+input, textarea {
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid #9ca3af;
+  border-radius: .3rem;
+  padding: .55rem;
+  font: inherit;
+}
+
+.titulo-modal__acoes {
+  padding: 1rem 0 0;
+  justify-content: flex-end;
+  gap: .5rem;
+}
+
+@media (max-width: 600px) {
+  :host {
+    padding: 1rem;
+  }
+
+  .titulo-lista__cabecalho {
+    align-items: flex-start;
+    gap: 1rem;
+    flex-direction: column;
+  }
+
+  .tabela {
+    display: block;
+    overflow-x: auto;
+  }
+}
