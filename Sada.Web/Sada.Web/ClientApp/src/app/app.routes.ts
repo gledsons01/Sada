@@ -5,5 +5,6 @@ import { UsuarioListaComponent } from './features/usuarios/pages/usuario-lista/u
 export const routes: Routes = [
   { path: 'titulo', component: TituloListaComponent },
   { path: 'usuario', component: UsuarioListaComponent },
-  { path: '', pathMatch: 'full', redirectTo: 'titulo' }
+  { path: '', pathMatch: 'full', redirectTo: 'titulo' },
+  { path: '', pathMatch: 'full', redirectTo: 'usuario' }
 ];

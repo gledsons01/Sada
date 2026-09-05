@@ -27,31 +27,44 @@ export class TituloListaComponent {
   novo(): void {
     this.editando = false;
     this.tituloEmEdicao = this.criarTituloVazio();
+    //this.tituloEmEdicao = { idtitulo: 0, nometitulo: '', descricao: '', datavencimento: '', status: '' };
+    this.dataVencimentoTexto = '';
     this.modalAberta = true;
   }
 
   editar(titulo: Titulo): void {
     this.editando = true;
     this.tituloEmEdicao = { ...titulo };
+    this.dataVencimentoTexto = titulo.datavencimento;
     this.modalAberta = true;
   }
 
   salvar(): void {
+    this.tituloEmEdicao.datavencimento = this.dataVencimentoTexto;
     const nometitulo = this.tituloEmEdicao.nometitulo.trim();
-    const descricao = this.tituloEmEdicao.descricao.trim();
-    const datavencimento = this.tituloEmEdicao.datavencimento;
-    const status = this.tituloEmEdicao.status.trim();
 
     if (!nometitulo) return;
 
     if (this.editando) {
-      const indice = this.titulos.findIndex((titulo) => titulo.idtitulo === this.tituloEmEdicao.idtitulo);
+      const indice = this.titulos.findIndex(
+        titulo => titulo.idtitulo === this.tituloEmEdicao.idtitulo
+      );
 
-      if (indice >= 0)
+      if (indice >= 0) {
         this.titulos[indice] = { ...this.tituloEmEdicao, nometitulo };
+      }
+    } else {
+      this.titulos.push({
+        ...this.tituloEmEdicao,
+        idtitulo: this.proximoId(),
+        nometitulo
+      });
+    }
 
-    } else
-      this.titulos.push({ ...this.tituloEmEdicao, idtitulo: this.proximoId(), nometitulo });
+    console.log('Título salvo:', this.tituloEmEdicao);
+    console.log('Lista de títulos atualizada:', this.titulos);
+    console.log('Data de vencimento:', this.dataVencimentoTexto);
+    console.log('Status :', this.tituloEmEdicao.status);
 
     this.fecharModal();
   }
@@ -60,7 +73,7 @@ export class TituloListaComponent {
   fecharModal(): void { this.modalAberta = false; }
 
   private criarTituloVazio(): Titulo {
-    return { idtitulo: 0, nometitulo: '', descricao: '', datavencimento: new Date().toISOString().slice(0, 10), status: 'A' };
+    return { idtitulo: 0, nometitulo: '', descricao: '', datavencimento: '', status: '' };
   }
 
   private proximoId(): number { return Math.max(0, ...this.titulos.map((titulo) => titulo.idtitulo)) + 1; }

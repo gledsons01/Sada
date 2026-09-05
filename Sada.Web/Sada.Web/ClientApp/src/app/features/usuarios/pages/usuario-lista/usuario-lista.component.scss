@@ -4,12 +4,12 @@
   color: #1f2937;
 }
 
-.titulo-lista {
+.usuario-lista {
   max-width: 960px;
   margin: 0 auto;
 }
 
-.titulo-lista__cabecalho {
+.usuario-lista__cabecalho {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -62,7 +62,7 @@ h1, h2 {
   cursor: not-allowed;
 }
 
-.sem-titulos {
+.sem-usuarios {
   padding: 2rem;
   text-align: center;
   background: #f9fafb;
@@ -135,7 +135,7 @@ input, textarea {
     padding: 1rem;
   }
 
-  .titulo-lista__cabecalho {
+  .usuario-lista__cabecalho {
     align-items: flex-start;
     gap: 1rem;
     flex-direction: column;

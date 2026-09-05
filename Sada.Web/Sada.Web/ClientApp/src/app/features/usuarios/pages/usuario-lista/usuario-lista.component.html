@@ -1,1 +1,118 @@
-<p>usuario-lista works!</p>
+<section class="titulo-lista">
+  <header class="titulo-lista__cabecalho">
+    <h1>Usuários</h1>
+    <button type="button" class="botao botao--primario" (click)="novo()">Novo Usuario</button>
+  </header>
+
+  <table class="tabela" border="1" cellpadding="5" cellspacing="01" *ngIf="usuarios.length; else semUsuarios">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Usuário</th>
+        <th>Nome Social</th>
+        <th>Login</th>
+        <th>Endereço</th>
+        <th>Bairro</th>
+        <th>Cidade</th>
+        <th>U.F.</th>
+        <th>Sexo</th>
+        <th>E-mail</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let usuario of usuarios">
+        <td>{{ usuario.idusuario }}</td>
+        <td>{{ usuario.nomeusuario }}</td>
+        <td>{{ usuario.nomesocial }}</td>
+        <td>{{ usuario.login }}</td>
+        <td>{{ usuario.endereco }}</td>
+        <td>{{ usuario.bairro }}</td>
+        <td>{{ usuario.idcidade }}</td>
+        <td>{{ usuario.iduf }}</td>
+        <td>{{ usuario.idsexo }}</td>
+        <td>{{ usuario.email }}</td>
+        <td class="acoes">
+          <button type="button" class="botao" (click)="editar(usuario)">Editar</button>
+          <button type="button" class="botao botao--perigo" (click)="excluir(usuario)">Excluir</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <ng-template #semUsuarios><p class="sem-Usuarios">Nenhum usuário cadastrado.</p></ng-template>
+</section>
+<div class="modal-fundo" *ngIf="modalAberta" (click)="fecharModal()">
+  <section class="titulo-modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo" (click)="$event.stopPropagation()">
+    <header class="titulo-modal__cabecalho">
+      <h2 id="modal-titulo">{{ editando ? 'Editar usuário' : 'Novo usuário' }}</h2>
+      <button type="button" class="titulo-modal__fechar" aria-label="Fechar" (click)="fecharModal()">&times;</button>
+    </header>
+
+    <form #formTitulo="ngForm" (ngSubmit)="salvar()">
+
+      <div class="campo">
+        <label for="nomeusuario">Usuário </label>
+        <input id="nome" name="nome" [(ngModel)]="usuarioEmEdicao.nomeusuario" required maxlength="120">
+      </div>
+
+      <div class="campo">
+        <label for="nomesocial">Nome Social:</label>
+        <input type="text" id="nomesocial" name="nomesocial" [(ngModel)]="usuarioEmEdicao.nomesocial" required maxlength="120">
+      </div>
+
+      <div class="campo">
+        <label for="login">Login: </label>
+        <input type="text" id="login" name="login" [(ngModel)]="usuarioEmEdicao.login" required maxlength="20">
+      </div>
+
+      <div class="campo">
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" name="senha" [(ngModel)]="usuarioEmEdicao.senha" required maxlength="20">
+      </div>
+
+      <div class="campo">
+        <label for="endereco">Endereço:</label>
+        <input type="text" id="endereco" name="endereco" [(ngModel)]="usuarioEmEdicao.endereco" required maxlength="120">
+      </div>
+
+      <div class="campo">
+        <label for="numeroendereco">Número:</label>
+        <input type="text" id="numeroendereco" name="numeroendereco" [(ngModel)]="usuarioEmEdicao.numeroendereco" required maxlength="10">
+      </div>
+
+      <div class="campo">
+        <label for="bairro">Bairro:</label>
+        <input type="text" id="bairro" name="bairro" [(ngModel)]="usuarioEmEdicao.bairro" required maxlength="100">
+      </div>
+
+      <div class="campo">
+        <label for="iduf">U.F.:</label>
+        <select id="iduf" name="iduf" [(ngModel)]="usuarioEmEdicao.iduf" required>
+          <option value="" disabled>Selecione a U.F.</option>
+          <!-- Opções de U.F. -->
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="idcidade">Cidade:</label>
+        <select id="idcidade" name="idcidade" [(ngModel)]="usuarioEmEdicao.idcidade" required>
+          <option value="" disabled>Selecione a cidade</option>
+          <!-- Opções de cidades -->
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="idsexo">Sexo:</label>
+        <select id="idsexo" name="idsexo" [(ngModel)]="usuarioEmEdicao.idsexo" required>
+          <option value="" disabled>Selecione o sexo</option>
+          <!-- Opções de sexo -->
+        </select>
+      </div>
+
+      <footer class="titulo-modal__acoes">
+        <button type="button" class="botao" (click)="fecharModal()">Cancelar</button>
+        <button type="submit" class="botao botao--primario" [disabled]="formTitulo.invalid">Salvar</button>
+      </footer>
+    </form>
+  </section>
+</div>
