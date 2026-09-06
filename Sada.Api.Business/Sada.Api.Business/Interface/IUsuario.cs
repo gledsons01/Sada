@@ -1,8 +1,5 @@
 ﻿using Sada.Api.Entity.Model.Request;
 using Sada.Api.Entity.Model.Response;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Sada.Api.Business.Interface
 {

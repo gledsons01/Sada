@@ -3,10 +3,6 @@ using Sada.Api.Business.Interface;
 using Sada.Api.Entity.Interface;
 using Sada.Api.Entity.Model.Request;
 using Sada.Api.Entity.Model.Response;
-using Sada.Api.Entity.Repository;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Sada.Api.Business
 {

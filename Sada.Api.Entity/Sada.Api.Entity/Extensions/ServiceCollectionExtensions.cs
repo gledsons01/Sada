@@ -21,7 +21,10 @@ public static class ServiceCollectionExtensions
             options.UseSqlServer(connectionString));
         services.AddScoped<ITituloRepository, TituloRepository>();
         services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-
+        services.AddScoped<IUfRepository, UfRepository>();
+        services.AddScoped<ICidadeRepository, CidadeRepository>();
+        services.AddScoped<ISexoRepository, SexoRepository>();
+        
         return services;
     }
 }

@@ -145,6 +145,17 @@ export class UsuarioListaComponent {
         idusuario: this.proximoId(),
         nomeusuario
       });
+
+      console.log('Novo usuário adicionado:', this.usuarioEmEdicao);
+      console.log('Login:', this.usuarioEmEdicao.login);
+      console.log('Senha:', this.usuarioEmEdicao.senha);
+      console.log('Endereço:', this.usuarioEmEdicao.endereco);
+      console.log('Número:', this.usuarioEmEdicao.numeroendereco);
+      console.log('Bairro:', this.usuarioEmEdicao.bairro);
+      console.log('U.F.:', this.usuarioEmEdicao.iduf);
+      console.log('Cidade:', this.usuarioEmEdicao.idcidade);
+      console.log('Sexo:', this.usuarioEmEdicao.idsexo);
+      console.log('E-mail:', this.usuarioEmEdicao.email);      
     }
   }
 }
