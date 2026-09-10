@@ -48,6 +48,18 @@ public sealed class DependencyInjectionConfigurationsTests
             item.ImplementationType == typeof(Titulo) &&
             item.Lifetime == ServiceLifetime.Scoped);
         Assert.Contains(services, item =>
+            item.ServiceType == typeof(ISexo) &&
+            item.ImplementationType == typeof(Sexo) &&
+            item.Lifetime == ServiceLifetime.Scoped);
+        Assert.Contains(services, item =>
+            item.ServiceType == typeof(IUf) &&
+            item.ImplementationType == typeof(Uf) &&
+            item.Lifetime == ServiceLifetime.Scoped);
+        Assert.Contains(services, item =>
+            item.ServiceType == typeof(ICidade) &&
+            item.ImplementationType == typeof(Cidade) &&
+            item.Lifetime == ServiceLifetime.Scoped);
+        Assert.Contains(services, item =>
             item.ServiceType.FullName == "Microsoft.Extensions.Caching.Memory.IMemoryCache");
         Assert.Contains(services, item =>
             item.ServiceType.FullName == "Microsoft.AspNetCore.Mvc.Infrastructure.IActionInvokerFactory");

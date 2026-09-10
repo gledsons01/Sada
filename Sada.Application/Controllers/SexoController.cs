@@ -3,7 +3,6 @@ using Sada.Api.Entity.Model.Response;
 using Sada.Api.Entity.Model.Request;
 using Sada.Api.Business.Interface;
 using Sada.Application.Services;
-using Microsoft.VisualBasic;
 
 namespace Sada.Application.Controllers
 {
@@ -11,16 +10,21 @@ namespace Sada.Application.Controllers
     [Route("sexo")]
     public class SexoController : Controller
     {
+        #region ++ Atributos Globais ++
         private readonly ISexo _sexoBusiness;
-        private readonly IJwtTokenService _jwtTokenService;
         private readonly ILogger<SexoController> _logger;
 
-        public SexoController(ILogger<SexoController> logger, ISexo sexoBusiness, IJwtTokenService jwtTokenService)
+        #endregion ++ Atributos Globais ++
+
+        #region ++ Construtor ++
+
+        public SexoController(ILogger<SexoController> logger, ISexo sexoBusiness)
         {
             _logger = logger;
             _sexoBusiness = sexoBusiness;
-            _jwtTokenService = jwtTokenService;            
         }
+
+        #endregion ++ Construtor ++
 
         [HttpGet("listar-sexo")]
         [ProducesResponseType(typeof(SexoModelResponse), 200)]

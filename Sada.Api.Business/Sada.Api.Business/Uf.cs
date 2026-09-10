@@ -2,14 +2,21 @@ using Microsoft.Extensions.Logging;
 using Sada.Api.Business.Interface;
 using Sada.Api.Entity.Interface;
 using Sada.Api.Entity.Model;
+using Sada.Api.Entity.Model.Request;
 using Sada.Api.Entity.Model.Response;
 
 namespace Sada.Api.Business
 {
     public class Uf : IUf
     {
+        #region ++ Atributos Globais ++
+
         private readonly ILogger<Uf> _logger;
         private readonly IUfRepository _ufRepository;
+
+        #endregion ++ Atributos Globais ++
+
+        #region ++ Construtor ++
 
         public Uf(ILogger<Uf> logger, IUfRepository ufRepository)
         {
@@ -17,7 +24,9 @@ namespace Sada.Api.Business
             _ufRepository = ufRepository;
         }
 
-        public async Task<List<UfModelResponse>> ListUfsAsync()
+        #endregion ++ Construtor ++
+
+        public async Task<List<UfModelResponse>> ListarUfsAsync()
         {
             try
             {
@@ -65,7 +74,7 @@ namespace Sada.Api.Business
             }
         }
 
-        public async Task<UfModelResponse> IncluirUfAsync(UfModelResponse model)
+        public async Task<UfModelResponse> IncluirUfAsync(UfModelRequest model)
         {
             try
             {
@@ -90,7 +99,7 @@ namespace Sada.Api.Business
             }
         }
 
-        public async Task<UfModelResponse> AlterarUfAsync(UfModelResponse model)
+        public async Task<UfModelResponse> AlterarUfAsync(UfModelRequest model)
         {
             try
             {

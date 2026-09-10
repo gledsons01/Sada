@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Sada.Api.Business.Interface;
 using Sada.Api.Entity.Interface;
 using Sada.Api.Entity.Model.Request;
@@ -8,8 +8,14 @@ namespace Sada.Api.Business;
 
 public class Sexo : ISexo
 {
+    #region ++ Atributos Globais ++
+
     private readonly ILogger<Sexo> _logger;
     private readonly ISexoRepository _sexoRepository;
+
+    #endregion ++ Atributos Globais ++
+
+    #region ++ Construtor ++
 
     public Sexo(ILogger<Sexo> logger, ISexoRepository sexoRepository)
     {
@@ -17,24 +23,13 @@ public class Sexo : ISexo
         _sexoRepository = sexoRepository;
     }
 
-    public async Task<SexoModelResponse> CadastrarSexoAsync(SexoModelRequest model)
-    {
-        var sexoCadastrado = await _sexoRepository.IncluirSexoAsync(model);
-        _logger.LogInformation(
-            "Cadastro de sexo realizado com sucesso. ID: {IdSexo}",
-            sexoCadastrado.IdSexo);
-
-        return sexoCadastrado;
-    }
+    #endregion ++ Construtor ++
 
     public async Task<List<SexoModelResponse>> ListarSexosAsync()
     {
-        var sexos = await _sexoRepository.ListarSexosAsync();
-        _logger.LogInformation(
-            "Listagem de sexos realizada. Quantidade: {Quantidade}",
-            sexos.Count);
-
-        return sexos;
+        var result = await _sexoRepository.ListarSexosAsync();
+        _logger.LogInformation($"Listagem de sexos realizada. Quantidade: {result.Count}", result.Count);
+        return result;
     }
 
     public async Task<SexoModelResponse> ObterSexoPorIdAsync(int idSexo)
@@ -50,6 +45,18 @@ public class Sexo : ISexo
         _logger.LogInformation("Sexo com ID {IdSexo} obtido com sucesso.", idSexo);
         return sexo;
     }
+
+    public async Task<SexoModelResponse> CadastrarSexoAsync(SexoModelRequest model)
+    {
+        var sexoCadastrado = await _sexoRepository.IncluirSexoAsync(model);
+        _logger.LogInformation(
+            "Cadastro de sexo realizado com sucesso. ID: {IdSexo}",
+            sexoCadastrado.IdSexo);
+
+        return sexoCadastrado;
+    }
+
+    
 
     public async Task<SexoModelResponse> AlterarSexoAsync(SexoModelRequest model)
     {

@@ -121,11 +121,6 @@ namespace Sada.Application.Controllers
                 _logger.LogError(ex, $"Erro ao excluir dados da cidade {id}.");
                 return StatusCode(500, $"Erro ao excluir dados da cidade {id}.");
             }
-        }
-
-        public IActionResult Index()
-        {
-            return View();
-        }
+        }        
     }
 }

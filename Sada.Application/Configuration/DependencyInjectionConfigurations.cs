@@ -19,6 +19,9 @@ namespace Sada.Application.Configuration
             services.AddMvc();
             services.AddScoped<ITitulo, Titulo>();
             services.AddScoped<IUsuario, Usuario>();
+            services.AddScoped<ISexo, Sexo>();
+            services.AddScoped<IUf, Uf>();
+            services.AddScoped<ICidade, Cidade>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
 
             return services;

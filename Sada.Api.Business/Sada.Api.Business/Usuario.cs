@@ -11,14 +11,22 @@ namespace Sada.Api.Business
 {
     public class Usuario :IUsuario
     {
+        #region ++ Atributos Globais ++
+
         private readonly ILogger<Usuario> _logger;
         private readonly IUsuarioRepository _usuarioRepository;
+
+        #endregion ++ Atributos Globais ++
+
+        #region ++ Construtor ++
 
         public Usuario(ILogger<Usuario> logger, IUsuarioRepository usuarioRepository)
         {
             _logger = logger;
             _usuarioRepository = usuarioRepository;
         }
+
+        #endregion ++ Construtor ++
 
         public async Task<List<UsuarioModelResponse>> ListUsuarios()
         {

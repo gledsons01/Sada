@@ -8,14 +8,22 @@ namespace Sada.Api.Business
 {
     public class Cidade : ICidade
     {
-        private readonly ILogger _logger;
+        #region ++ Atributos Globais ++
+
+        private readonly ILogger<Cidade> _logger;
         private readonly ICidadeRepository _cidadeRepository;
+
+        #endregion ++ Atributos Globais ++
+
+        #region ++ Construtor ++
 
         public Cidade(ILogger<Cidade> logger, ICidadeRepository cidadeRepository)
         {
             _logger = logger;
             _cidadeRepository = cidadeRepository;
         }
+
+        #endregion ++ Construtor ++
 
         public async Task<List<CidadeModelResponse>> ListarCidadesAsync()
         {

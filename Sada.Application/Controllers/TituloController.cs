@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sada.Api.Entity.Model.Response;
-using Sada.Api.Entity.Model.Request;
 using Sada.Api.Business.Interface;
+using Sada.Api.Entity.Model.Request;
+using Sada.Api.Entity.Model.Response;
+using Sada.Application.Services;
 using System.Globalization;
 
 namespace Sada.Application.Controllers
@@ -10,13 +11,41 @@ namespace Sada.Application.Controllers
     [Route("titulo")]
     public class TituloController : Controller
     {
+        #region ++ Atributos Globais ++
         private readonly ITitulo _tituloBusiness;
         private readonly ILogger<TituloController> _logger;
 
-        public TituloController(ILogger<TituloController> logger, ITitulo tituloBusiness)
+        #endregion ++ Atributos Globais ++
+
+        #region ++ Construtor ++
+
+        public TituloController(ILogger<TituloController> logger,  ITitulo tituloBusiness)
         {
             _logger = logger;
             _tituloBusiness = tituloBusiness;
+        }
+
+        #endregion ++ Construtor ++
+
+        [HttpGet("listar-todos-titulos")]
+        public async Task<IActionResult> ListarTitulosAsync()
+        {
+            var listAll = await _tituloBusiness.ListTitulosAsync();
+            _logger.LogInformation($"ListarTitulosAsync() - Listagem de Título efetuada com sucesso.");
+            return Ok(listAll);
+        }
+
+        [HttpGet("listar-titutlos-status-vencimento")]
+        public async Task<IActionResult> ListarTitulosByStatusVencimento([FromBody] TituloModelEditExclusao model)
+        {
+            if (!await VerificarDadosTitulo(model))
+            {
+                _logger.LogCritical($"ListarTitulosByStatusVencimento() - Dados do Título são inválidos.");
+                return BadRequest("ListarTitulosByStatusVencimento() - Dados do Título são inválidos.");
+            }
+
+            var listByStatusVencimento = await _tituloBusiness.ListTitulos(model.Status, model.Vencimento);
+            return Ok(listByStatusVencimento);
         }
 
         [HttpPost("cadastrar")]
@@ -35,26 +64,9 @@ namespace Sada.Application.Controllers
             return Created();
         }
 
-        [HttpGet("listar-todos-titulos")]
-        public async Task<IActionResult> ListarTitulos()
-        {
-            var listAll = await _tituloBusiness.ListTitulos();
-            _logger.LogInformation($"ListarTitulos() - Listagem de Título efetuada com sucesso.");
-            return Ok(listAll);
-        }
+       
 
-        [HttpGet("listar-titutlos-status-vencimento")]
-        public async Task<IActionResult> ListarTitulosByStatusVencimento([FromBody] TituloModelEditExclusao model)
-        {
-            if (!await VerificarDadosTitulo(model))
-            {
-                _logger.LogCritical($"ListarTitulosByStatusVencimento() - Dados do Título são inválidos.");
-                return BadRequest("ListarTitulosByStatusVencimento() - Dados do Título são inválidos.");
-            }
-            
-            var listByStatusVencimento = await _tituloBusiness.ListTitulos(model.Status, model.Vencimento);
-            return Ok(listByStatusVencimento);
-        }
+        
 
         [HttpPut("alterar-titulo")]
         public async Task<IActionResult> AlterarTitulo([FromBody] TituloModelEditExclusao model)

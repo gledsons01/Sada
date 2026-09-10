@@ -15,13 +15,25 @@ public class SadaDbContext(DbContextOptions<SadaDbContext> options) : DbContext(
     {
         modelBuilder.Entity<TituloModel>(entity =>
         {
+            entity.ToTable("TBL_TITULO", "dbo");
             entity.HasKey(item => item.IdTitulo);
+            entity.Property(item => item.IdTitulo)
+                .HasColumnName("ID_TITULO")
+                .ValueGeneratedNever();
             entity.Property(item => item.Titulo)
-                .HasMaxLength(150)
-                .IsRequired();
+                .HasColumnName("TITULO")
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(item => item.Descricao)
+                .HasColumnName("DESCRICAO")
                 .HasMaxLength(200)
-                .IsRequired();
+                .IsUnicode(false);
+            entity.Property(item => item.Vencimento)
+                .HasColumnName("DATA_VENCIMENTO")
+                .HasColumnType("date");
+            entity.Property(item => item.Status)
+                .HasColumnName("STATUS")
+                .HasColumnType("char(1)");
         });
 
         modelBuilder.Entity<UsuarioModel>(entity =>

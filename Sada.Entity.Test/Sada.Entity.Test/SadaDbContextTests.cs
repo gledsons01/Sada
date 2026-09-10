@@ -20,7 +20,7 @@ public sealed class SadaDbContextTests
     }
 
     [Theory]
-    [InlineData(nameof(TituloModel.Titulo), 150)]
+    [InlineData(nameof(TituloModel.Titulo), 50)]
     [InlineData(nameof(TituloModel.Descricao), 200)]
     public void OnModelCreating_DeveConfigurarCamposObrigatoriosComTamanhoMaximo(string propertyName, int maxLength)
     {
