@@ -107,7 +107,7 @@ namespace Sada.Api.Entity.Migrations
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)")
-                        .HasColumnName("DESCRICAO_IF");
+                        .HasColumnName("DESCRICAO_UF");
 
                     b.Property<string>("Sigla_Uf")
                         .HasColumnType("char(2)")

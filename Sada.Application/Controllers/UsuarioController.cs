@@ -10,9 +10,15 @@ namespace Sada.Application.Controllers
     [Route("usuario")]
     public class UsuarioController : Controller
     {
+        #region ++ Atributos Globais ++
+
         private readonly IUsuario _usuarioBusiness;
         private readonly IJwtTokenService _jwtTokenService;
         private readonly ILogger<UsuarioController> _logger;
+
+        #endregion ++ Atributos Globais ++
+
+        #region ++ Construtor ++
 
         public UsuarioController(ILogger<UsuarioController> logger, IUsuario usuarioBusiness, IJwtTokenService jwtTokenService)
         {
@@ -21,21 +27,7 @@ namespace Sada.Application.Controllers
             _jwtTokenService = jwtTokenService;
         }
 
-        [HttpPost("cadastrar")]
-        [ProducesResponseType(typeof(UsuarioModelResponse), 200)]
-        public async Task<IActionResult> CadastrarUsuario([FromBody] UsuarioModelRequest usuarioModelRequest)
-        {
-            try
-            {
-                var result = await _usuarioBusiness.CadastrarUsuario(usuarioModelRequest);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao cadastrar usuario");
-                return StatusCode(500, "Ocorreu um erro ao processar a solicitacao.");
-            }
-        }
+        #endregion ++ Construtor ++
 
         [HttpGet("listar-usuarios")]
         public async Task<IActionResult> ListarUsuarios()
@@ -70,6 +62,22 @@ namespace Sada.Application.Controllers
                 return StatusCode(500, "Ocorreu um erro ao processar a solicitacao.");
             }
         }
+
+        [HttpPost("cadastrar")]
+        [ProducesResponseType(typeof(UsuarioModelResponse), 200)]
+        public async Task<IActionResult> CadastrarUsuario([FromBody] UsuarioModelRequest usuarioModelRequest)
+        {
+            try
+            {
+                var result = await _usuarioBusiness.CadastrarUsuario(usuarioModelRequest);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao cadastrar usuario");
+                return StatusCode(500, "Ocorreu um erro ao processar a solicitacao.");
+            }
+        }        
 
         [HttpPut("alterar-usuario")]
         public async Task<IActionResult> AlterarUsuario([FromBody] UsuarioModelRequest usuarioModelRequest)

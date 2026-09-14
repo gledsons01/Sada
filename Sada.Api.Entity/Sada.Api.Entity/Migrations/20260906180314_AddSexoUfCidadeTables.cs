@@ -34,7 +34,7 @@ namespace Sada.Api.Entity.Migrations
                 {
                     ID_UF = table.Column<int>(type: "int", nullable: false),
                     SIGLA_UF = table.Column<string>(type: "char(2)", nullable: true),
-                    DESCRICAO_IF = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true)
+                    DESCRICAO_UF = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true)
                 },
                 constraints: table =>
                 {

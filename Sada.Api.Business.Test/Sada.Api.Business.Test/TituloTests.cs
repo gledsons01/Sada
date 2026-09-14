@@ -31,7 +31,7 @@ public sealed class TituloTests
         var logger = new TestLogger<Sada.Api.Business.Titulo>();
         var service = CriarServico(repository, logger);
 
-        var result = await service.ListTitulos();
+        var result = await service.ListTitulosAsync();
 
         Assert.Same(repository.ListarTitulosResult, result);
         Assert.Equal(1, repository.ListarTitulosCalls);
@@ -52,7 +52,7 @@ public sealed class TituloTests
         var logger = new TestLogger<Sada.Api.Business.Titulo>();
         var service = CriarServico(repository, logger);
 
-        var result = await service.ListTitulos();
+        var result = await service.ListTitulosAsync();
 
         Assert.Empty(result);
         Assert.Equal(1, repository.ListarTitulosCalls);

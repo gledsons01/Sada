@@ -103,7 +103,7 @@ public class SadaDbContext(DbContextOptions<SadaDbContext> options) : DbContext(
                 .HasColumnName("SIGLA_UF")
                 .HasColumnType("char(2)");
             entity.Property(item => item.Sigla)
-                .HasColumnName("DESCRICAO_IF")
+                .HasColumnName("DESCRICAO_UF")
                 .HasMaxLength(100)
                 .IsUnicode(false);
         });
