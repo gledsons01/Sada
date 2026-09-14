@@ -63,11 +63,7 @@ namespace Sada.Application.Controllers
             _logger.LogInformation($"Titulo {model.Titulo} cadastrado com sucesso. ");
             return Created();
         }
-
-       
-
-        
-
+            
         [HttpPut("alterar-titulo")]
         public async Task<IActionResult> AlterarTitulo([FromBody] TituloModelEditExclusao model)
         {

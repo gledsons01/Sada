@@ -49,14 +49,9 @@ public class Sexo : ISexo
     public async Task<SexoModelResponse> CadastrarSexoAsync(SexoModelRequest model)
     {
         var sexoCadastrado = await _sexoRepository.IncluirSexoAsync(model);
-        _logger.LogInformation(
-            "Cadastro de sexo realizado com sucesso. ID: {IdSexo}",
-            sexoCadastrado.IdSexo);
-
+        _logger.LogInformation("Cadastro de sexo realizado com sucesso. ID: {IdSexo}", sexoCadastrado.IdSexo);
         return sexoCadastrado;
-    }
-
-    
+    }    
 
     public async Task<SexoModelResponse> AlterarSexoAsync(SexoModelRequest model)
     {
@@ -64,16 +59,11 @@ public class Sexo : ISexo
 
         if (sexoAlterado is null)
         {
-            _logger.LogWarning(
-                "Sexo com ID {IdSexo} não encontrado para alteração.",
-                model.IdSexo);
-            throw new KeyNotFoundException(
-                $"Sexo com ID {model.IdSexo} não encontrado para alteração.");
+            _logger.LogWarning("Sexo com ID {IdSexo} não encontrado para alteração.", model.IdSexo);
+            throw new KeyNotFoundException($"Sexo com ID {model.IdSexo} não encontrado para alteração.");
         }
 
-        _logger.LogInformation(
-            "Sexo com ID {IdSexo} alterado com sucesso.",
-            model.IdSexo);
+        _logger.LogInformation("Sexo com ID {IdSexo} alterado com sucesso.", model.IdSexo);
 
         return sexoAlterado;
     }

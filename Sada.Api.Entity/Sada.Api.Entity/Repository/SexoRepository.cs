@@ -22,17 +22,24 @@ public class SexoRepository : ISexoRepository
             .Select(item => (int?)item.IdSexo)
             .MaxAsync(cancellationToken) ?? 0;
 
-        var entity = new SexoModel
+        try
         {
-            IdSexo = nextId + 1,
-            Descricao = model.Descricao?.Trim() ?? string.Empty,
-            Sigla = model.Sigla?.Trim().ToUpperInvariant() ?? string.Empty
-        };
+            var entity = new SexoModel
+            {
+                IdSexo = nextId + 1,
+                Descricao = model.Descricao?.Trim() ?? string.Empty,
+                Sigla = model.Sigla?.Trim().ToUpperInvariant() ?? string.Empty
+            };
 
-        await _context.Sexos.AddAsync(entity, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
+            await _context.Sexos.AddAsync(entity, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
 
-        return MapearResponse(entity);
+            return MapearResponse(entity);
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }        
     }
 
     public async Task<List<SexoModelResponse>> ListarSexosAsync(CancellationToken cancellationToken = default)
