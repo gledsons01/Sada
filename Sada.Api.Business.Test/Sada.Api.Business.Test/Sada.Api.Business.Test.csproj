@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Sada.Application\Sada.Application.csproj" />
     <ProjectReference Include="..\..\Sada.Api.Business\Sada.Api.Business\Sada.Api.Business.csproj" />
   </ItemGroup>
 

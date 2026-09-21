@@ -231,13 +231,12 @@ public sealed class UsuarioControllerTests
                 model => model.Login == "email@teste.com" && model.Senha == "senha")))
             .ReturnsAsync(expected);
         jwt.Setup(x => x.PreencherTokens(expected))
-            .Callback<UsuarioModelResponse>(usuario => usuario.Token = "jwt");
+            .Returns(new TokenModelResponse { Token = "jwt" });
 
         var result = await controller.LoginUsuarioAsync("email@teste.com", "senha");
 
         var ok = Assert.IsType<OkObjectResult>(result);
         Assert.Same(expected, ok.Value);
-        Assert.Equal("jwt", expected.Token);
         business.Verify(x => x.LoginUsuarioAsync(It.IsAny<LoginModelRequest>()), Times.Once);
         jwt.Verify(x => x.PreencherTokens(expected), Times.Once);
     }
@@ -267,7 +266,7 @@ public sealed class UsuarioControllerTests
 
         AssertStatus(result, 500, MensagemErro);
         jwt.Verify(x => x.PreencherTokens(It.IsAny<UsuarioModelResponse>()), Times.Never);
-        VerificarLogErro(logger, "Erro ao fazer login do usuario", expected);
+        VerificarLogErro(logger, "Erro ao fazer login: Falha no login.", expected);
     }
 
     [Fact]
@@ -283,7 +282,7 @@ public sealed class UsuarioControllerTests
 
         AssertStatus(result, 500, MensagemErro);
         jwt.Verify(x => x.PreencherTokens(usuario), Times.Once);
-        VerificarLogErro(logger, "Erro ao fazer login do usuario", expected);
+        VerificarLogErro(logger, "Erro ao fazer login: Falha ao gerar token.", expected);
     }
 
     private static (
@@ -294,8 +293,13 @@ public sealed class UsuarioControllerTests
     {
         var business = new Mock<IUsuario>(MockBehavior.Strict);
         var jwt = new Mock<IJwtTokenService>(MockBehavior.Strict);
+        var cache = new Mock<ICacheService>(MockBehavior.Strict);
         var logger = new Mock<ILogger<UsuarioController>>();
-        return (new UsuarioController(logger.Object, business.Object, jwt.Object), business, jwt, logger);
+        return (
+            new UsuarioController(logger.Object, business.Object, jwt.Object, cache.Object),
+            business,
+            jwt,
+            logger);
     }
 
     private static UsuarioModelRequest CriarRequest(int? id = null) => new()

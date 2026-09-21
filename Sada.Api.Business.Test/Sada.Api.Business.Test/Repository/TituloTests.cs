@@ -5,8 +5,7 @@ using Sada.Api.Entity.Interface;
 using Sada.Api.Entity.Model.Request;
 using Sada.Api.Entity.Model.Response;
 
-namespace Sada.Api.Business.Test;
-
+namespace Sada.Api.Business.Test.Repository;
 public sealed class TituloTests
 {
     [Fact]
@@ -18,7 +17,7 @@ public sealed class TituloTests
     }
 
     [Fact]
-    public async Task ListTitulos_DeveRetornarTodosOsTitulosERegistrarQuantidade()
+    public async Task ListTitulosAsync_DeveRetornarTodosOsTitulosERegistrarQuantidade()
     {
         var repository = new FakeTituloRepository
         {
@@ -44,7 +43,7 @@ public sealed class TituloTests
     }
 
     [Fact]
-    public async Task ListTitulos_QuandoRepositorioRetornaListaVazia_DeveRetornarListaVaziaELogarZero()
+    public async Task ListTitulosAsync_QuandoRepositorioRetornaListaVazia_DeveRetornarListaVaziaELogarZero()
     {
         var repository = new FakeTituloRepository
         {
@@ -63,7 +62,7 @@ public sealed class TituloTests
     }
 
     [Fact]
-    public async Task ListTitulos_ComFiltros_DeveRepassarParametrosRetornarResultadoERegistrarQuantidade()
+    public async Task ListTitulosAsync_ComFiltros_DeveRepassarParametrosRetornarResultadoERegistrarQuantidade()
     {
         var vencimento = new DateTime(2026, 6, 1);
         var repository = new FakeTituloRepository
@@ -91,7 +90,7 @@ public sealed class TituloTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public async Task ListTitulos_ComStatusOpcional_DeveRepassarStatusComoRecebido(string? status)
+    public async Task ListTitulosAsync_ComStatusOpcional_DeveRepassarStatusComoRecebido(string? status)
     {
         var repository = new FakeTituloRepository
         {
@@ -174,7 +173,7 @@ public sealed class TituloTests
     }
 
     [Fact]
-    public async Task CadastrarTitulo_QuandoRepositorioRetornaSucesso_DeveRetornarRespostaERegistrarLog()
+    public async Task CadastrarTituloAsync_QuandoRepositorioRetornaSucesso_DeveRetornarRespostaERegistrarLog()
     {
         var request = new TituloModelRequest
         {
@@ -202,7 +201,7 @@ public sealed class TituloTests
     }
 
     [Fact]
-    public async Task CadastrarTitulo_QuandoRepositorioLancaExcecao_DeveLogarErroERelancar()
+    public async Task CadastrarTituloAsync_QuandoRepositorioLancaExcecao_DeveLogarErroERelancar()
     {
         var request = new TituloModelRequest
         {
@@ -228,7 +227,7 @@ public sealed class TituloTests
     }
 
     [Fact]
-    public async Task AlterarTitulo_QuandoTituloExiste_DeveRetornarRespostaERegistrarLog()
+    public async Task AlterarTituloAsync_QuandoTituloExiste_DeveRetornarRespostaERegistrarLog()
     {
         var request = new TituloModelEditExclusao
         {
@@ -240,7 +239,7 @@ public sealed class TituloTests
         var response = CriarResponse(7, "Alterado");
         var repository = new FakeTituloRepository
         {
-            AlterarTituloResult = response
+            AlterarTituloAsyncResult = response
         };
 
         var logger = new TestLogger<Sada.Api.Business.Titulo>();
@@ -249,7 +248,7 @@ public sealed class TituloTests
         var result = await service.AlterarTituloAsync(request);
 
         Assert.Same(response, result);
-        Assert.Equal(1, repository.AlterarTituloCalls);
+        Assert.Equal(1, repository.AlterarTituloAsyncCalls);
         Assert.Same(request, repository.LastEditRequest);
 
         var log = Assert.Single(logger.Entries);
@@ -258,7 +257,7 @@ public sealed class TituloTests
     }
 
     [Fact]
-    public async Task AlterarTitulo_QuandoTituloNaoExiste_DeveLogarAvisoELancarKeyNotFoundException()
+    public async Task AlterarTituloAsync_QuandoTituloNaoExiste_DeveLogarAvisoELancarKeyNotFoundException()
     {
         var request = new TituloModelEditExclusao
         {
@@ -268,7 +267,7 @@ public sealed class TituloTests
 
         var repository = new FakeTituloRepository
         {
-            AlterarTituloResult = null
+            AlterarTituloAsyncResult = null
         };
 
         var logger = new TestLogger<Sada.Api.Business.Titulo>();
@@ -277,7 +276,7 @@ public sealed class TituloTests
         var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => service.AlterarTituloAsync(request));
 
         Assert.Equal("Titulo com ID 99 não encontrado.", exception.Message);
-        Assert.Equal(1, repository.AlterarTituloCalls);
+        Assert.Equal(1, repository.AlterarTituloAsyncCalls);
 
         var log = Assert.Single(logger.Entries);
         Assert.Equal(LogLevel.Warning, log.Level);
@@ -287,7 +286,7 @@ public sealed class TituloTests
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task ApagarTitulo_DeveRetornarResultadoDoRepositorioERegistrarLog(bool repositoryResult)
+    public async Task ApagarTituloAsync_DeveRetornarResultadoDoRepositorioERegistrarLog(bool repositoryResult)
     {
         var request = new TituloModelEditExclusao
         {
@@ -297,7 +296,7 @@ public sealed class TituloTests
 
         var repository = new FakeTituloRepository
         {
-            ApagarTituloResult = repositoryResult
+            ApagarTituloAsyncResult = repositoryResult
         };
 
         var logger = new TestLogger<Sada.Api.Business.Titulo>();
@@ -306,7 +305,7 @@ public sealed class TituloTests
         var result = await service.ApagarTituloAsync(request);
 
         Assert.Equal(repositoryResult, result);
-        Assert.Equal(1, repository.ApagarTituloCalls);
+        Assert.Equal(1, repository.ApagarTituloAsyncCalls);
         Assert.Same(request, repository.LastDeleteRequest);
 
         var log = Assert.Single(logger.Entries);
@@ -314,9 +313,7 @@ public sealed class TituloTests
         Assert.Contains("Titulo apagado. ID: 12", log.Message);
     }
 
-    private static Sada.Api.Business.Titulo CriarServico(
-        FakeTituloRepository? repository = null,
-        TestLogger<Sada.Api.Business.Titulo>? logger = null)
+    private static Sada.Api.Business.Titulo CriarServico(FakeTituloRepository? repository = null, TestLogger<Sada.Api.Business.Titulo>? logger = null)
     {
         return new Sada.Api.Business.Titulo(
             logger ?? new TestLogger<Sada.Api.Business.Titulo>(),
@@ -358,14 +355,14 @@ public sealed class TituloTests
         public TituloModelResponse IncluirTituloResult { get; set; } = new();
         public TituloModelResponse? ObterTituloResult { get; set; }
         public Exception? IncluirTituloException { get; set; }
-        public TituloModelResponse? AlterarTituloResult { get; set; } = new();
-        public bool ApagarTituloResult { get; set; }
+        public TituloModelResponse? AlterarTituloAsyncResult { get; set; } = new();
+        public bool ApagarTituloAsyncResult { get; set; }
         public int ListarTitulosCalls { get; private set; }
         public int ListarTitulosFiltradoCalls { get; private set; }
         public int IncluirTituloCalls { get; private set; }
         public int ObterTituloCalls { get; private set; }
-        public int AlterarTituloCalls { get; private set; }
-        public int ApagarTituloCalls { get; private set; }
+        public int AlterarTituloAsyncCalls { get; private set; }
+        public int ApagarTituloAsyncCalls { get; private set; }
         public string? LastStatus { get; private set; }
         public DateTime? LastVencimento { get; private set; }
         public TituloModelRequest? LastRequest { get; private set; }
@@ -416,18 +413,18 @@ public sealed class TituloTests
             TituloModelEditExclusao model,
             CancellationToken cancellationToken = default)
         {
-            ApagarTituloCalls++;
+            ApagarTituloAsyncCalls++;
             LastDeleteRequest = model;
-            return Task.FromResult(ApagarTituloResult);
+            return Task.FromResult(ApagarTituloAsyncResult);
         }
 
         public Task<TituloModelResponse?> AlterarTituloAsync(
             TituloModelEditExclusao model,
             CancellationToken cancellationToken = default)
         {
-            AlterarTituloCalls++;
+            AlterarTituloAsyncCalls++;
             LastEditRequest = model;
-            return Task.FromResult(AlterarTituloResult);
+            return Task.FromResult(AlterarTituloAsyncResult);
         }
     }
 
