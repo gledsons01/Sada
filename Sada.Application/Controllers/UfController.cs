@@ -10,9 +10,15 @@ namespace Sada.Application.Controllers
     [Route("uf")]
     public class UfController : Controller
     {
+        #region + Atributos Globais +
+
         private readonly IUf _ufBusiness;
         private readonly IJwtTokenService _jwtTokenService;
         private readonly ILogger<UfController> _logger;
+
+        #endregion + Atributos Globais +
+
+        #region + Construtores +
 
         public UfController(IUf ufBusiness, IJwtTokenService jwtTokenService, ILogger<UfController> logger)
         {
@@ -20,6 +26,10 @@ namespace Sada.Application.Controllers
             _jwtTokenService = jwtTokenService;
             _logger = logger;
         }
+
+        #endregion + Construtores +
+
+        #region + End Point +
 
         [HttpGet("listar-uf")]
         public async Task<IActionResult> ListarUfAsync()
@@ -114,5 +124,7 @@ namespace Sada.Application.Controllers
         {
             return View();
         }
+
+        #endregion + End Point +
     }
 }

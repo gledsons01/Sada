@@ -6,22 +6,36 @@ using Sada.Application.Services;
 
 namespace Sada.Application.Controllers
 {
+    [ApiController]
+    [Route("cidades")]
     public class CidadeController : Controller
     {
+        #region ++ Atributos Globais ++
+
         private readonly ICidade _cidadeBusiness;
         private readonly IJwtTokenService _jwtTokenService;
         private readonly ILogger<CidadeController> _logger;
 
-        public CidadeController(ICidade cidadeBusiness, 
-            IJwtTokenService jwtTokenService, 
-            ILogger<CidadeController> logger)
+        #endregion ++ Atributos Globais ++
+
+        #region ++ Construtores ++
+
+        public CidadeController(ICidade cidadeBusiness, IJwtTokenService jwtTokenService, ILogger<CidadeController> logger)
         {
             _cidadeBusiness = cidadeBusiness;
             _jwtTokenService = jwtTokenService;
-            _logger = logger;            
+            _logger = logger;
         }
 
-        [HttpGet("listar-cidade")]
+        #endregion ++ Construtores ++
+
+        #region ++ End Point ++
+
+        /// <summary>
+        /// Listar todas as cidades cadastradas no sistema.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("listar-cidades")]
         public async Task<IActionResult> ListarCidadeAsync()
         {
             try
@@ -37,7 +51,23 @@ namespace Sada.Application.Controllers
             }
         }
 
-        [HttpGet("obter-cidade")]
+        [HttpGet("listar-cidade-uf/{idUf}")]
+        public async Task<IActionResult> ListarCidadesPorUfAsync(int idUf)
+        {
+            try
+            {
+                var result = await _cidadeBusiness.ObterCidadesPorUfAsync(idUf);
+                _logger.LogInformation($"Listagem de cidades por UF efetuada com sucesso.");
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao listar cidades por UF.");
+                return StatusCode(500, "Ocorreu um erro ao processar a solicitacao de listagem de cidades por UF.");
+            }
+        }
+
+        [HttpGet("obter-cidade/{id}")]
         public async Task<IActionResult> ObterCidadeAsync(int id)
         {
             try
@@ -121,6 +151,8 @@ namespace Sada.Application.Controllers
                 _logger.LogError(ex, $"Erro ao excluir dados da cidade {id}.");
                 return StatusCode(500, $"Erro ao excluir dados da cidade {id}.");
             }
-        }        
+        }
+
+        #endregion ++ End Point ++
     }
 }

@@ -32,14 +32,26 @@ namespace Sada.Api.Business
             return listAll;
         }
 
-        public async Task<List<TituloModelResponse>> ListTitulos(string? status, DateTime? vencimento)
+        public async Task<List<TituloModelResponse>> ListTitulosAsync(string? status, DateTime? vencimento)
         {
             var listFiltered = await _tituloRepository.ListarTitulosAsync(status, vencimento);
             _logger.LogInformation($"Listagem de Registros Filtrados - {listFiltered.Count} .");
             return listFiltered;
         }
 
-        public async Task<TituloModelResponse> CadastrarTitulo(TituloModelRequest model)
+        public async Task<TituloModelResponse?> ObterTituloPorIdAsync(int idTitulo)
+        {
+            var result = await _tituloRepository.ObterTituloPorIdAsync(idTitulo);
+            if (result is null)
+            {
+                _logger.LogWarning($"Titulo não encontrado. ID: {idTitulo}");
+                throw new KeyNotFoundException($"Titulo com ID {idTitulo} não encontrado.");
+            }
+            _logger.LogInformation($"Titulo obtido. ID: {idTitulo}");
+            return result;
+        }
+
+        public async Task<TituloModelResponse> CadastrarTituloAsync(TituloModelRequest model)
         {
             try
             {
@@ -54,7 +66,7 @@ namespace Sada.Api.Business
             }
         }
 
-        public async Task<TituloModelResponse> AlterarTitulo(TituloModelEditExclusao model)
+        public async Task<TituloModelResponse> AlterarTituloAsync(TituloModelEditExclusao model)
         {
             var result = await _tituloRepository.AlterarTituloAsync(model);
 
@@ -68,7 +80,7 @@ namespace Sada.Api.Business
             return result;
         }
 
-        public async Task<bool> ApagarTitulo(TituloModelEditExclusao model)
+        public async Task<bool> ApagarTituloAsync(TituloModelEditExclusao model)
         {
             var result = await _tituloRepository.ApagarTituloAsync(model);
 

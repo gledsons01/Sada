@@ -115,6 +115,117 @@ public sealed class TituloRepositoryTests
         Assert.Empty(result);
     }
 
+    [Fact]
+    public async Task ObterTituloPorIdAsync_QuandoExiste_DeveMapearTodosOsCampos()
+    {
+        await using var context = CriarContexto();
+        var vencimento = new DateTime(2026, 9, 30, 14, 45, 0);
+        await SeedAsync(context,
+            new TituloModel
+            {
+                IdTitulo = 1,
+                Titulo = "Primeiro",
+                Descricao = "Descricao primeiro",
+                Vencimento = new DateTime(2026, 9, 1),
+                Status = 'P'
+            },
+            new TituloModel
+            {
+                IdTitulo = 7,
+                Titulo = "Titulo procurado",
+                Descricao = "Descricao procurada",
+                Vencimento = vencimento,
+                Status = 'A'
+            });
+        var repository = new TituloRepository(context);
+
+        var result = await repository.ObterTituloPorIdAsync(7);
+
+        Assert.NotNull(result);
+        Assert.Equal(7, result.IdTitulo);
+        Assert.Equal("Titulo procurado", result.Titulo);
+        Assert.Equal("Descricao procurada", result.Descricao);
+        Assert.Equal(vencimento, result.Vencimento);
+        Assert.Equal('A', result.Status);
+        Assert.True(result.Retorno);
+    }
+
+    [Fact]
+    public async Task ObterTituloPorIdAsync_QuandoCamposOpcionaisSaoNulos_DevePreservarValoresNulos()
+    {
+        await using var context = CriarContexto();
+        await SeedAsync(context, new TituloModel
+        {
+            IdTitulo = 1,
+            Titulo = "Titulo",
+            Descricao = "Descricao",
+            Vencimento = null,
+            Status = null
+        });
+        var repository = new TituloRepository(context);
+
+        var result = await repository.ObterTituloPorIdAsync(1);
+
+        Assert.NotNull(result);
+        Assert.Null(result.Vencimento);
+        Assert.Null(result.Status);
+        Assert.True(result.Retorno);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(999)]
+    public async Task ObterTituloPorIdAsync_QuandoNaoExiste_DeveRetornarNulo(int id)
+    {
+        await using var context = CriarContexto();
+        await SeedAsync(context, new TituloModel
+        {
+            IdTitulo = 1,
+            Titulo = "Existente",
+            Descricao = "Descricao existente",
+            Status = 'P'
+        });
+        var repository = new TituloRepository(context);
+
+        var result = await repository.ObterTituloPorIdAsync(id);
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task ObterTituloPorIdAsync_DeveRetornarNovoResponseSemAlterarEntidadeRastreada()
+    {
+        await using var context = CriarContexto();
+        await SeedAsync(context, new TituloModel
+        {
+            IdTitulo = 1,
+            Titulo = "Original",
+            Descricao = "Descricao original",
+            Status = 'P'
+        });
+        var repository = new TituloRepository(context);
+
+        var result = await repository.ObterTituloPorIdAsync(1);
+        Assert.NotNull(result);
+        result.Titulo = "Alterado apenas no response";
+
+        var entity = await context.Titulos.SingleAsync();
+        Assert.Equal("Original", entity.Titulo);
+    }
+
+    [Fact]
+    public async Task ObterTituloPorIdAsync_ComTokenCancelado_DevePropagarCancelamento()
+    {
+        await using var context = CriarContexto();
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+        var repository = new TituloRepository(context);
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            repository.ObterTituloPorIdAsync(1, cancellation.Token));
+    }
+
     [Theory]
     [InlineData("a")]
     [InlineData(" A ")]

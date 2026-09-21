@@ -60,6 +60,25 @@ public class TituloRepository(SadaDbContext context) : ITituloRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<TituloModelResponse?> ObterTituloPorIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var entity = await _context.Titulos
+            .FirstOrDefaultAsync(item => item.IdTitulo == id, cancellationToken);
+        if (entity is null)
+        {
+            return null;
+        }
+        return new TituloModelResponse
+        {
+            IdTitulo = entity.IdTitulo,
+            Titulo = entity.Titulo,
+            Descricao = entity.Descricao,
+            Vencimento = entity.Vencimento,
+            Status = entity.Status,
+            Retorno = true
+        };
+    }
+
     public async Task<List<TituloModelResponse>> ListarTitulosAsync(string? status, DateTime? vencimento, CancellationToken cancellationToken = default)
     {
         var query = _context.Titulos.AsQueryable();
@@ -92,9 +111,7 @@ public class TituloRepository(SadaDbContext context) : ITituloRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<TituloModelResponse?> AlterarTituloAsync(
-        TituloModelEditExclusao model,
-        CancellationToken cancellationToken = default)
+    public async Task<TituloModelResponse?> AlterarTituloAsync(TituloModelEditExclusao model, CancellationToken cancellationToken = default)
     {
         var entity = await _context.Titulos
             .FirstOrDefaultAsync(item => item.IdTitulo == model.IdTitulo, cancellationToken);

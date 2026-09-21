@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Moq;
 using Sada.Api.Business.Interface;
 using Sada.Api.Entity.Interface;
 using Sada.Api.Entity.Model.Request;
@@ -72,7 +73,7 @@ public sealed class TituloTests
         var logger = new TestLogger<Sada.Api.Business.Titulo>();
         var service = CriarServico(repository, logger);
 
-        var result = await service.ListTitulos("A", vencimento);
+        var result = await service.ListTitulosAsync("A", vencimento);
 
         Assert.Same(repository.ListarTitulosFiltradoResult, result);
         Assert.Equal(1, repository.ListarTitulosFiltradoCalls);
@@ -98,10 +99,78 @@ public sealed class TituloTests
         };
         var service = CriarServico(repository);
 
-        await service.ListTitulos(status, null);
+        await service.ListTitulosAsync(status, null);
 
         Assert.Equal(status, repository.LastStatus);
         Assert.Null(repository.LastVencimento);
+    }
+
+    [Fact]
+    public async Task ObterTituloPorIdAsync_QuandoExiste_DeveRetornarMesmaRespostaERegistrarSucesso()
+    {
+        var expected = CriarResponse(7, "Titulo encontrado");
+        var repository = new Mock<ITituloRepository>(MockBehavior.Strict);
+        var logger = new Mock<ILogger<Sada.Api.Business.Titulo>>();
+        repository.Setup(x => x.ObterTituloPorIdAsync(7, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected);
+        var service = new Sada.Api.Business.Titulo(logger.Object, repository.Object);
+
+        var result = await service.ObterTituloPorIdAsync(7);
+
+        Assert.Same(expected, result);
+        repository.Verify(
+            x => x.ObterTituloPorIdAsync(7, It.IsAny<CancellationToken>()),
+            Times.Once);
+        VerificarLogMoq(logger, LogLevel.Information, "Titulo obtido. ID: 7");
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(999)]
+    public async Task ObterTituloPorIdAsync_QuandoNaoExiste_DeveRegistrarAvisoELancarKeyNotFoundException(
+        int idTitulo)
+    {
+        var repository = new Mock<ITituloRepository>(MockBehavior.Strict);
+        var logger = new Mock<ILogger<Sada.Api.Business.Titulo>>();
+        repository.Setup(x => x.ObterTituloPorIdAsync(idTitulo, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((TituloModelResponse?)null);
+        var service = new Sada.Api.Business.Titulo(logger.Object, repository.Object);
+
+        var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+            service.ObterTituloPorIdAsync(idTitulo));
+
+        Assert.Equal($"Titulo com ID {idTitulo} não encontrado.", exception.Message);
+        repository.Verify(
+            x => x.ObterTituloPorIdAsync(idTitulo, It.IsAny<CancellationToken>()),
+            Times.Once);
+        VerificarLogMoq(logger, LogLevel.Warning, $"Titulo não encontrado. ID: {idTitulo}");
+    }
+
+    [Fact]
+    public async Task ObterTituloPorIdAsync_QuandoRepositorioFalha_DevePropagarExcecaoSemRegistrarLog()
+    {
+        var expected = new InvalidOperationException("Falha ao obter titulo");
+        var repository = new Mock<ITituloRepository>(MockBehavior.Strict);
+        var logger = new Mock<ILogger<Sada.Api.Business.Titulo>>();
+        repository.Setup(x => x.ObterTituloPorIdAsync(7, It.IsAny<CancellationToken>()))
+            .ThrowsAsync(expected);
+        var service = new Sada.Api.Business.Titulo(logger.Object, repository.Object);
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            service.ObterTituloPorIdAsync(7));
+
+        Assert.Same(expected, exception);
+        repository.Verify(
+            x => x.ObterTituloPorIdAsync(7, It.IsAny<CancellationToken>()),
+            Times.Once);
+        logger.Verify(x => x.Log(
+                It.IsAny<LogLevel>(),
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                It.IsAny<Exception?>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Never);
     }
 
     [Fact]
@@ -122,7 +191,7 @@ public sealed class TituloTests
         var logger = new TestLogger<Sada.Api.Business.Titulo>();
         var service = CriarServico(repository, logger);
 
-        var result = await service.CadastrarTitulo(request);
+        var result = await service.CadastrarTituloAsync(request);
 
         Assert.Same(response, result);
         Assert.Equal(1, repository.IncluirTituloCalls);
@@ -148,7 +217,7 @@ public sealed class TituloTests
         var logger = new TestLogger<Sada.Api.Business.Titulo>();
         var service = CriarServico(repository, logger);
 
-        var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => service.CadastrarTitulo(request));
+        var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => service.CadastrarTituloAsync(request));
 
         Assert.Same(exception, thrown);
         Assert.Equal(1, repository.IncluirTituloCalls);
@@ -177,7 +246,7 @@ public sealed class TituloTests
         var logger = new TestLogger<Sada.Api.Business.Titulo>();
         var service = CriarServico(repository, logger);
 
-        var result = await service.AlterarTitulo(request);
+        var result = await service.AlterarTituloAsync(request);
 
         Assert.Same(response, result);
         Assert.Equal(1, repository.AlterarTituloCalls);
@@ -205,7 +274,7 @@ public sealed class TituloTests
         var logger = new TestLogger<Sada.Api.Business.Titulo>();
         var service = CriarServico(repository, logger);
 
-        var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => service.AlterarTitulo(request));
+        var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => service.AlterarTituloAsync(request));
 
         Assert.Equal("Titulo com ID 99 não encontrado.", exception.Message);
         Assert.Equal(1, repository.AlterarTituloCalls);
@@ -234,7 +303,7 @@ public sealed class TituloTests
         var logger = new TestLogger<Sada.Api.Business.Titulo>();
         var service = CriarServico(repository, logger);
 
-        var result = await service.ApagarTitulo(request);
+        var result = await service.ApagarTituloAsync(request);
 
         Assert.Equal(repositoryResult, result);
         Assert.Equal(1, repository.ApagarTituloCalls);
@@ -267,17 +336,34 @@ public sealed class TituloTests
         };
     }
 
+    private static void VerificarLogMoq(
+        Mock<ILogger<Sada.Api.Business.Titulo>> logger,
+        LogLevel level,
+        string mensagem)
+    {
+        logger.Verify(x => x.Log(
+                level,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((state, _) =>
+                    state.ToString() != null && state.ToString()!.Contains(mensagem)),
+                It.IsAny<Exception?>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
+
     private sealed class FakeTituloRepository : ITituloRepository
     {
         public List<TituloModelResponse> ListarTitulosResult { get; set; } = [];
         public List<TituloModelResponse> ListarTitulosFiltradoResult { get; set; } = [];
         public TituloModelResponse IncluirTituloResult { get; set; } = new();
+        public TituloModelResponse? ObterTituloResult { get; set; }
         public Exception? IncluirTituloException { get; set; }
         public TituloModelResponse? AlterarTituloResult { get; set; } = new();
         public bool ApagarTituloResult { get; set; }
         public int ListarTitulosCalls { get; private set; }
         public int ListarTitulosFiltradoCalls { get; private set; }
         public int IncluirTituloCalls { get; private set; }
+        public int ObterTituloCalls { get; private set; }
         public int AlterarTituloCalls { get; private set; }
         public int ApagarTituloCalls { get; private set; }
         public string? LastStatus { get; private set; }
@@ -316,6 +402,14 @@ public sealed class TituloTests
             LastStatus = status;
             LastVencimento = vencimento;
             return Task.FromResult(ListarTitulosFiltradoResult);
+        }
+
+        public Task<TituloModelResponse?> ObterTituloPorIdAsync(
+            int id,
+            CancellationToken cancellationToken = default)
+        {
+            ObterTituloCalls++;
+            return Task.FromResult(ObterTituloResult);
         }
 
         public Task<bool> ApagarTituloAsync(
