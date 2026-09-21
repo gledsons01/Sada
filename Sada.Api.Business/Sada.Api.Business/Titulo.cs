@@ -3,17 +3,19 @@ using Sada.Api.Business.Interface;
 using Sada.Api.Entity.Interface;
 using Sada.Api.Entity.Model.Request;
 using Sada.Api.Entity.Model.Response;
-using Sada.Api.Entity.Repository;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Sada.Api.Business
 {
     public class Titulo : ITitulo
     {
+        #region ++ Atributos Globais ++
+
         private readonly ILogger<Titulo> _logger;
         private readonly ITituloRepository _tituloRepository;
+
+        #endregion ++ Atributos Globais ++
+
+        #region ++ Construtor ++
 
         public Titulo(ILogger<Titulo> logger, ITituloRepository tituloRepository)
         {
@@ -21,7 +23,9 @@ namespace Sada.Api.Business
             _tituloRepository = tituloRepository;
         }
 
-        public async Task<List<TituloModelResponse>> ListTitulos()
+        #endregion ++ Construtor ++
+
+        public async Task<List<TituloModelResponse>> ListTitulosAsync()
         {
             var listAll = await _tituloRepository.ListarTitulosAsync();
             _logger.LogInformation($"Listagem de Registros Cadastrados -  {listAll.Count}. " );

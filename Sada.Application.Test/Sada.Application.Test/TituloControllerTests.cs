@@ -66,7 +66,7 @@ public sealed class TituloControllerTests
         var logger = new TestLogger<TituloController>();
         var controller = CriarController(business, logger);
 
-        var result = await controller.ListarTitulos();
+        var result = await controller.ListarTitulosAsync();
 
         var ok = Assert.IsType<OkObjectResult>(result);
         Assert.Same(expected, ok.Value);
@@ -325,7 +325,7 @@ public sealed class TituloControllerTests
         public TituloModelEditExclusao? LastEditRequest { get; private set; }
         public TituloModelEditExclusao? LastDeleteRequest { get; private set; }
 
-        public Task<List<TituloModelResponse>> ListTitulos()
+        public Task<List<TituloModelResponse>> ListTitulosAsync()
         {
             ListTitulosCalls++;
             return Task.FromResult(ListTitulosResult);
