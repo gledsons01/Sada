@@ -64,7 +64,7 @@ public sealed class SexoRepositoryTests
     }
 
     [Fact]
-    public async Task IncluirSexoAsync_QuandoSalvarFalha_DeveRetornarNulo()
+    public async Task IncluirSexoAsync_QuandoSalvarFalha_DevePropagarDbUpdateException()
     {
         var mock = CriarContextoMock();
         await using var context = mock.Object;
@@ -72,9 +72,10 @@ public sealed class SexoRepositoryTests
             .ThrowsAsync(new DbUpdateException("Falha simulada"));
         var repository = new SexoRepository(context);
 
-        var result = await repository.IncluirSexoAsync(new() { Descricao = "Masculino", Sigla = "M" });
+        var exception = await Assert.ThrowsAsync<DbUpdateException>(() =>
+            repository.IncluirSexoAsync(new() { Descricao = "Masculino", Sigla = "M" }));
 
-        Assert.Null(result);
+        Assert.Equal("Falha simulada", exception.Message);
         mock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 

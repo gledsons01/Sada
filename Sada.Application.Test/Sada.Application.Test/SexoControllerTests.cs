@@ -32,6 +32,22 @@ public sealed class SexoControllerTests
     }
 
     [Fact]
+    public async Task ListarSexoAsync_QuandoListaVazia_DeveRetornarOkComListaVaziaERegistrarInformacao()
+    {
+        var expected = new List<SexoModelResponse>();
+        var (controller, business, logger) = CriarController();
+        business.Setup(x => x.ListarSexosAsync()).ReturnsAsync(expected);
+
+        var result = await controller.ListarSexoAsync();
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        Assert.Same(expected, ok.Value);
+        Assert.Empty(Assert.IsType<List<SexoModelResponse>>(ok.Value));
+        business.Verify(x => x.ListarSexosAsync(), Times.Once);
+        VerificarLog(logger, LogLevel.Information, "Listagem de Sexo efetuada com sucesso");
+    }
+
+    [Fact]
     public async Task ListarSexoAsync_QuandoBusinessLancaExcecao_DeveRetornar500ERegistrarErro()
     {
         var exception = new InvalidOperationException("Falha simulada");

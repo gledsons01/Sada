@@ -2,13 +2,12 @@
 using Sada.Api.Business.Interface;
 using Sada.Api.Entity.Model.Request;
 using Sada.Api.Entity.Model.Response;
-using Sada.Application.Services;
 using System.Globalization;
 
 namespace Sada.Application.Controllers
 {
     [ApiController]
-    [Route("titulo")]
+    [Route("titulos")]
     public class TituloController : Controller
     {
         #region ++ Atributos Globais ++
@@ -27,12 +26,28 @@ namespace Sada.Application.Controllers
 
         #endregion ++ Construtor ++
 
-        [HttpGet("listar-todos-titulos")]
+        #region ++ End Point ++
+
+        [HttpGet("listar-titulos")]
         public async Task<IActionResult> ListarTitulosAsync()
         {
             var listAll = await _tituloBusiness.ListTitulosAsync();
             _logger.LogInformation($"ListarTitulosAsync() - Listagem de Título efetuada com sucesso.");
             return Ok(listAll);
+        }
+
+        [HttpGet("obter-titulo/{id}")]
+        public async Task<IActionResult> ObterTituloAsync(int id)
+        {
+            var result = await _tituloBusiness.ObterTituloPorIdAsync(id);
+            if (result == null)
+            {
+                _logger.LogWarning($"Título não encontrado {id}.");
+                return NotFound($"Título não encontrado {id}.");
+            }
+
+            _logger.LogInformation($"Título localizado {id}.");
+            return Ok(result);
         }
 
         [HttpGet("listar-titutlos-status-vencimento")]
@@ -44,7 +59,7 @@ namespace Sada.Application.Controllers
                 return BadRequest("ListarTitulosByStatusVencimento() - Dados do Título são inválidos.");
             }
 
-            var listByStatusVencimento = await _tituloBusiness.ListTitulos(model.Status, model.Vencimento);
+            var listByStatusVencimento = await _tituloBusiness.ListTitulosAsync(model.Status, model.Vencimento);
             return Ok(listByStatusVencimento);
         }
 
@@ -58,7 +73,7 @@ namespace Sada.Application.Controllers
                 return BadRequest("Dados do título inválidos.");
             }
 
-            var cadastrarTitulo = await _tituloBusiness.CadastrarTitulo(model);
+            var cadastrarTitulo = await _tituloBusiness.CadastrarTituloAsync(model);
 
             _logger.LogInformation($"Titulo {model.Titulo} cadastrado com sucesso. ");
             return Created();
@@ -73,7 +88,7 @@ namespace Sada.Application.Controllers
                 return BadRequest("AlterarTitulo() - Dados do Título são inválidos.");
             }
 
-            var alterarTitulo = await _tituloBusiness.AlterarTitulo(model);
+            var alterarTitulo = await _tituloBusiness.AlterarTituloAsync(model);
 
             if (alterarTitulo == null)
             {
@@ -94,7 +109,7 @@ namespace Sada.Application.Controllers
                 return BadRequest("ApagarTitulo() - Dados do Título são inválidos.");
             }
 
-            var apagouTitulo = await _tituloBusiness.ApagarTitulo(model);
+            var apagouTitulo = await _tituloBusiness.ApagarTituloAsync(model);
             if (!apagouTitulo)
             {
                 _logger.LogWarning($"ApagarTitulo() - Registro não encontrado.");
@@ -171,6 +186,8 @@ namespace Sada.Application.Controllers
 
             return await Task.FromResult(true);
         }
+
+        #endregion ++ End Point ++
 
         [NonAction]
         public IActionResult Index()

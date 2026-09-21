@@ -38,7 +38,8 @@ public class SexoRepository : ISexoRepository
         }
         catch (Exception ex)
         {
-            return null;
+            throw ex.InnerException ?? ex;
+            //return null;
         }        
     }
 
