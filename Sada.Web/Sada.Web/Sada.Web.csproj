@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="src\app\features\sexo\sexo.routes.ts" />
+    <None Remove="src\app\features\sexo\sexo.service.ts" />
     <None Remove="src\app\features\titulo\titulo.routes.ts" />
     <None Remove="src\app\features\titulo\titulo.service.ts" />
     <None Remove="src\app\features\usuario\usuario.routes.ts" />
@@ -15,6 +17,9 @@
 
   <ItemGroup>
     <Folder Include="src\app\core\" />
+    <Folder Include="src\app\features\sexo\components\" />
+    <Folder Include="src\app\features\sexo\services\" />
+    <Folder Include="src\app\features\sexo\pages\" />
     <Folder Include="src\app\features\titulo\components\" />
     <Folder Include="src\app\features\titulo\services\" />
     <Folder Include="src\app\features\titulo\pages\" />
@@ -29,6 +34,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="src\app\features\sexo\sexo.routes.ts" />
+    <TypeScriptCompile Include="src\app\features\sexo\sexo.service.ts" />
     <TypeScriptCompile Include="src\app\features\titulo\titulo.routes.ts" />
     <TypeScriptCompile Include="src\app\features\titulo\titulo.service.ts" />
     <TypeScriptCompile Include="src\app\features\usuario\usuario.routes.ts" />

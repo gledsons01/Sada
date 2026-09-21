@@ -54,6 +54,10 @@ export class UsuarioListaComponent {
     return Math.max(0, ...this.usuarios.map((usuario) => usuario.idusuario)) + 1;
   }
 
+  excluir(usuario: Usuario): void {
+    this.usuarios = this.usuarios.filter((item) => item.idusuario !== usuario.idusuario);
+  }
+
   fecharModal(): void { this.modalAberta = false; }
 
   novo(): void {

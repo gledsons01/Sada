@@ -9,10 +9,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 var jwtSection = builder.Configuration.GetSection("Jwt");
 builder.Services.Configure<JwtSettings>(jwtSection);
+
 var jwtSettings = jwtSection.Get<JwtSettings>() ?? new JwtSettings();
 var jwtKey = Encoding.UTF8.GetBytes(jwtSettings.Key);
 
-//Add Authentication configuration
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AngularDevelopment", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -31,18 +42,15 @@ builder.Services
     });
 
 builder.Services.AddAuthorization();
-
-// Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddSadaEntityFramework(builder.Configuration);
 builder.Services.AddDependencyInjectionConfiguration(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Somente depois de registrar todos os serviços
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -50,8 +58,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("AngularDevelopment");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
 app.Run();

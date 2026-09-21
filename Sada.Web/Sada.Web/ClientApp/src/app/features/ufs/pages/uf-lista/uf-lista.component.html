@@ -1,0 +1,55 @@
+<section class="uf-lista">
+  <header class="uf-lista__cabecalho">
+    <h1>UF do Brasil</h1>
+    <button type="button" class="botao botao--primario" (click)="novo()">Novo UF</button>
+  </header>
+
+  <table class="tabela" border="1" cellpadding="5" cellspacing="01" *ngIf="ufs.length; else semUfs">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>UF</th>
+        <th>Sigla</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of sexos">
+        <td>{{ item.idsexo }}</td>
+        <td>{{ item.descricaosexo }}</td>
+        <td>{{ item.siglasexo }}</td>
+        
+        <td class="acoes">
+          <button type="button" class="botao" (click)="editar(item)">Editar</button>
+          <button type="button" class="botao botao--perigo" (click)="excluir(item)">Excluir</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <ng-template #semSexos><p class="sem-Sexos">Nenhum Tpo de Sexo cadastrado.</p></ng-template>
+</section>
+<div class="modal-fundo" *ngIf="modalAberta" (click)="fecharModal()">
+  <section class="sexo-modal" role="dialog" aria-modal="true" aria-labelledby="modal-sexo" (click)="$event.stopPropagation()">
+    <header class="sexo-modal__cabecalho">
+      <h2 id="modal-sexo">{{ editando ? 'Editar sexo' : 'Novo sexo' }}</h2>
+      <button type="button" class="sexo-modal__fechar" aria-label="Fechar" (click)="fecharModal()">&times;</button>
+    </header>
+
+    <form #formsexo="ngForm" (ngSubmit)="salvar()">
+
+      <div class="campo">
+        <label for="descricaosexo">Sexo: </label>
+        <input id="descricaosexo" name="descricaosexo" [(ngModel)]="sexoEmEdicao.descricaosexo" required maxlength="30">
+      </div>
+
+      <div class="campo">
+        <label for="siglasexo">Sigla: </label>
+        <input type="text" id="siglasexo" name="siglasexo" [(ngModel)]="sexoEmEdicao.siglasexo" required maxlength="02">
+      </div>
+
+      <footer class="sexo-modal__acoes">
+        <button type="button" class="botao" (click)="fecharModal()">Cancelar</button>
+        <button type="submit" class="botao botao--primario" [disabled]="formsexo.invalid">Salvar</button>
+      </footer>
+    </form>
+  </section>
+</div>

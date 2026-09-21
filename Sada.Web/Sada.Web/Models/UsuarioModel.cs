@@ -1,6 +1,6 @@
 ﻿namespace Sada.Web.Models
 {
-    public class Usuario
+    public class UsuarioModel
     {
         public int Id_Usuario { get; set; }
         public string NomeUsuario { get; set; } = string.Empty;

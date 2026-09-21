@@ -1,0 +1,62 @@
+<section class="sexo-lista">
+  <header class="sexo-lista__cabecalho">
+    <h1>Tipo de Sexo</h1>
+    <button type="button" class="botao botao--primario" (click)="novo()">Novo Sexo</button>
+  </header>
+
+  <p *ngIf="carregando">Carregando...</p>
+  <p *ngIf="mensagemErro">{{ mensagemErro }}</p>
+
+  <table class="tabela" border="1" cellpadding="5" cellspacing="01"
+    *ngIf="!carregando && sexos.length; else semSexos">
+
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Sexo</th>
+        <th>Sigla</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of sexos">
+        <td>{{ item.idsexo }}</td>
+        <td>{{ item.descricao }}</td>
+        <td>{{ item.sigla }}</td>
+        
+        <td class="acoes">
+          <button type="button" class="botao" (click)="editar(item)">Editar</button>
+          <button type="button" class="botao botao--perigo" (click)="excluir(item)">Excluir</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <ng-template #semSexos>
+    <p class="sem-Sexos">Nenhum Tpo de Sexo cadastrado.</p>
+  </ng-template>
+</section>
+<div class="modal-fundo" *ngIf="modalAberta" (click)="fecharModal()">
+  <section class="sexo-modal" role="dialog" aria-modal="true" aria-labelledby="modal-sexo" (click)="$event.stopPropagation()">
+    <header class="sexo-modal__cabecalho">
+      <h2 id="modal-sexo">{{ editando ? 'Editar sexo' : 'Novo sexo' }}</h2>
+      <button type="button" class="sexo-modal__fechar" aria-label="Fechar" (click)="fecharModal()">&times;</button>
+    </header>
+
+    <form #formsexo="ngForm" (ngSubmit)="salvar()">
+
+      <div class="campo">
+        <label for="descricaosexo">Sexo: </label>
+        <input id="descricao" name="descricao" [(ngModel)]="sexoEmEdicao.descricao" required maxlength="30">
+      </div>
+
+      <div class="campo">
+        <label for="siglasexo">Sigla: </label>
+        <input type="text" id="sigla" name="sigla" [(ngModel)]="sexoEmEdicao.sigla" required maxlength="02">
+      </div>
+
+      <footer class="sexo-modal__acoes">
+        <button type="button" class="botao" (click)="fecharModal()">Cancelar</button>
+        <button type="submit" class="botao botao--primario" [disabled]="formsexo.invalid">Salvar</button>
+      </footer>
+    </form>
+  </section>
+</div>
