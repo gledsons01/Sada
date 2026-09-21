@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Sada.Api.Business.Interface;
 using Sada.Api.Entity.Interface;
@@ -21,7 +21,7 @@ public class UsuarioTests
     }
 
     [Fact]
-    public async Task ListUsuarios_DeveRetornarUsuariosDoRepositorio()
+    public async Task ListUsuariosAsync_DeveRetornarUsuariosDoRepositorio()
     {
         var usuarios = new List<UsuarioModelResponse>
         {
@@ -35,7 +35,7 @@ public class UsuarioTests
 
         var service = CriarServico();
 
-        var result = await service.ListUsuarios();
+        var result = await service.ListUsuariosAsync();
 
         Assert.Same(usuarios, result);
         _usuarioRepositoryMock.Verify(
@@ -44,7 +44,7 @@ public class UsuarioTests
     }
 
     [Fact]
-    public async Task ListUsuarios_QuandoRepositorioRetornaListaVazia_DeveRetornarListaVazia()
+    public async Task ListUsuariosAsync_QuandoRepositorioRetornaListaVazia_DeveRetornarListaVazia()
     {
         var usuarios = new List<UsuarioModelResponse>();
 
@@ -54,7 +54,7 @@ public class UsuarioTests
 
         var service = CriarServico();
 
-        var result = await service.ListUsuarios();
+        var result = await service.ListUsuariosAsync();
 
         Assert.Empty(result);
         _usuarioRepositoryMock.Verify(
@@ -63,7 +63,7 @@ public class UsuarioTests
     }
 
     [Fact]
-    public async Task CadastrarUsuario_QuandoRepositorioRetornaSucesso_DeveRetornarResposta()
+    public async Task CadastrarUsuarioAsync_QuandoRepositorioRetornaSucesso_DeveRetornarResposta()
     {
         var request = CriarRequest(0, "novo.usuario");
         var response = CriarResponse(10, request.Login);
@@ -74,7 +74,7 @@ public class UsuarioTests
 
         var service = CriarServico();
 
-        var result = await service.CadastrarUsuario(request);
+        var result = await service.CadastrarUsuarioAsync(request);
 
         Assert.Same(response, result);
         _usuarioRepositoryMock.Verify(
@@ -83,7 +83,7 @@ public class UsuarioTests
     }
 
     [Fact]
-    public async Task CadastrarUsuario_QuandoRepositorioLancaExcecao_DeveRelancarExcecao()
+    public async Task CadastrarUsuarioAsync_QuandoRepositorioLancaExcecao_DeveRelancarExcecao()
     {
         var request = CriarRequest(0, "usuario.erro");
         var exception = new InvalidOperationException("Falha ao cadastrar usuario");
@@ -94,7 +94,7 @@ public class UsuarioTests
 
         var service = CriarServico();
 
-        var result = await Assert.ThrowsAsync<InvalidOperationException>(() => service.CadastrarUsuario(request));
+        var result = await Assert.ThrowsAsync<InvalidOperationException>(() => service.CadastrarUsuarioAsync(request));
 
         Assert.Same(exception, result);
         _usuarioRepositoryMock.Verify(
@@ -103,7 +103,7 @@ public class UsuarioTests
     }
 
     [Fact]
-    public async Task AlterarUsuario_QuandoUsuarioExiste_DeveRetornarResposta()
+    public async Task AlterarUsuarioAsync_QuandoUsuarioExiste_DeveRetornarResposta()
     {
         var request = CriarRequest(3, "usuario.alterado");
         var response = CriarResponse(3, request.Login);
@@ -114,7 +114,7 @@ public class UsuarioTests
 
         var service = CriarServico();
 
-        var result = await service.AlterarUsuario(request);
+        var result = await service.AlterarUsuarioAsync(request);
 
         Assert.Same(response, result);
         _usuarioRepositoryMock.Verify(
@@ -123,7 +123,7 @@ public class UsuarioTests
     }
 
     [Fact]
-    public async Task AlterarUsuario_QuandoUsuarioNaoExiste_DeveLancarKeyNotFoundException()
+    public async Task AlterarUsuarioAsync_QuandoUsuarioNaoExiste_DeveLancarKeyNotFoundException()
     {
         var request = CriarRequest(99, "usuario.inexistente");
 
@@ -133,7 +133,7 @@ public class UsuarioTests
 
         var service = CriarServico();
 
-        var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => service.AlterarUsuario(request));
+        var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => service.AlterarUsuarioAsync(request));
 
         Assert.Equal("Usuario com ID 99 não encontrado.", exception.Message);
         _usuarioRepositoryMock.Verify(
@@ -142,7 +142,7 @@ public class UsuarioTests
     }
 
     [Fact]
-    public async Task ApagarUsuario_QuandoUsuarioExiste_DeveRetornarTrue()
+    public async Task ApagarUsuarioAsync_QuandoUsuarioExiste_DeveRetornarTrue()
     {
         const int idUsuario = 4;
 
@@ -152,7 +152,7 @@ public class UsuarioTests
 
         var service = CriarServico();
 
-        var result = await service.ApagarUsuario(idUsuario);
+        var result = await service.ApagarUsuarioAsync(idUsuario);
 
         Assert.True(result);
         _usuarioRepositoryMock.Verify(
@@ -161,7 +161,7 @@ public class UsuarioTests
     }
 
     [Fact]
-    public async Task ApagarUsuario_QuandoUsuarioNaoExiste_DeveLancarKeyNotFoundException()
+    public async Task ApagarUsuarioAsync_QuandoUsuarioNaoExiste_DeveLancarKeyNotFoundException()
     {
         const int idUsuario = 99;
 
@@ -171,7 +171,7 @@ public class UsuarioTests
 
         var service = CriarServico();
 
-        var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => service.ApagarUsuario(idUsuario));
+        var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => service.ApagarUsuarioAsync(idUsuario));
 
         Assert.Equal("Usuario com ID 99 não encontrado.", exception.Message);
         _usuarioRepositoryMock.Verify(
@@ -180,7 +180,7 @@ public class UsuarioTests
     }
 
     [Fact]
-    public async Task ObterUsuarioPorId_QuandoUsuarioExiste_DeveRetornarResposta()
+    public async Task ObterUsuarioPorIdAsync_QuandoUsuarioExiste_DeveRetornarResposta()
     {
         const int idUsuario = 5;
         var response = CriarResponse(idUsuario, "usuario.consulta");
@@ -191,7 +191,7 @@ public class UsuarioTests
 
         var service = CriarServico();
 
-        var result = await service.ObterUsuarioPorId(idUsuario);
+        var result = await service.ObterUsuarioPorIdAsync(idUsuario);
 
         Assert.Same(response, result);
         _usuarioRepositoryMock.Verify(
@@ -200,7 +200,7 @@ public class UsuarioTests
     }
 
     [Fact]
-    public async Task ObterUsuarioPorId_QuandoUsuarioNaoExiste_DeveLancarKeyNotFoundException()
+    public async Task ObterUsuarioPorIdAsync_QuandoUsuarioNaoExiste_DeveLancarKeyNotFoundException()
     {
         const int idUsuario = 99;
 
@@ -210,7 +210,7 @@ public class UsuarioTests
 
         var service = CriarServico();
 
-        var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => service.ObterUsuarioPorId(idUsuario));
+        var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => service.ObterUsuarioPorIdAsync(idUsuario));
 
         Assert.Equal("Usuario com ID 99 não encontrado.", exception.Message);
         _usuarioRepositoryMock.Verify(
@@ -219,7 +219,7 @@ public class UsuarioTests
     }
 
     [Fact]
-    public async Task LoginUsuario_QuandoCredenciaisValidas_DeveRetornarResposta()
+    public async Task LoginUsuarioAsync_QuandoCredenciaisValidas_DeveRetornarResposta()
     {
         var request = new LoginModelRequest
         {
@@ -229,21 +229,21 @@ public class UsuarioTests
         var response = CriarResponse(6, request.Login);
 
         _usuarioRepositoryMock
-            .Setup(repository => repository.LoginUsuario(request, It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.LoginUsuarioAsync(request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
 
         var service = CriarServico();
 
-        var result = await service.LoginUsuario(request);
+        var result = await service.LoginUsuarioAsync(request);
 
         Assert.Same(response, result);
         _usuarioRepositoryMock.Verify(
-            repository => repository.LoginUsuario(request, It.IsAny<CancellationToken>()),
+            repository => repository.LoginUsuarioAsync(request, It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
     [Fact]
-    public async Task LoginUsuario_QuandoRepositorioRetornaNull_DeveLancarUnauthorizedAccessException()
+    public async Task LoginUsuarioAsync_QuandoRepositorioRetornaNull_DeveLancarUnauthorizedAccessException()
     {
         var request = new LoginModelRequest
         {
@@ -252,16 +252,16 @@ public class UsuarioTests
         };
 
         _usuarioRepositoryMock
-            .Setup(repository => repository.LoginUsuario(request, It.IsAny<CancellationToken>()))
+            .Setup(repository => repository.LoginUsuarioAsync(request, It.IsAny<CancellationToken>()))
             .ReturnsAsync((UsuarioModelResponse)null!);
 
         var service = CriarServico();
 
-        var exception = await Assert.ThrowsAsync<UnauthorizedAccessException>(() => service.LoginUsuario(request));
+        var exception = await Assert.ThrowsAsync<UnauthorizedAccessException>(() => service.LoginUsuarioAsync(request));
 
         Assert.Equal("Login falhou para o usuário: usuario.invalido", exception.Message);
         _usuarioRepositoryMock.Verify(
-            repository => repository.LoginUsuario(request, It.IsAny<CancellationToken>()),
+            repository => repository.LoginUsuarioAsync(request, It.IsAny<CancellationToken>()),
             Times.Once);
     }
 

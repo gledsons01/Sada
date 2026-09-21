@@ -21,7 +21,7 @@ public sealed class TituloBusinessTests
     }
 
     [Fact]
-    public async Task ListTitulos_DeveRetornarTodosOsTitulosDoRepositorio()
+    public async Task ListTitulosAsync_DeveRetornarTodosOsTitulosDoRepositorio()
     {
         var titulos = new List<TituloModelResponse>
         {
@@ -35,7 +35,7 @@ public sealed class TituloBusinessTests
 
         var service = CriarServico();
 
-        var result = await service.ListTitulos();
+        var result = await service.ListTitulosAsync();
 
         Assert.Same(titulos, result);
         _tituloRepositoryMock.Verify(
@@ -50,7 +50,7 @@ public sealed class TituloBusinessTests
     }
 
     [Fact]
-    public async Task ListTitulos_QuandoRepositorioRetornaListaVazia_DeveRetornarListaVazia()
+    public async Task ListTitulosAsync_QuandoRepositorioRetornaListaVazia_DeveRetornarListaVazia()
     {
         var titulos = new List<TituloModelResponse>();
 
@@ -60,7 +60,7 @@ public sealed class TituloBusinessTests
 
         var service = CriarServico();
 
-        var result = await service.ListTitulos();
+        var result = await service.ListTitulosAsync();
 
         Assert.Empty(result);
         _tituloRepositoryMock.Verify(
@@ -69,7 +69,7 @@ public sealed class TituloBusinessTests
     }
 
     [Fact]
-    public async Task ListTitulos_ComFiltros_DeveRepassarFiltrosERetornarTitulosDoRepositorio()
+    public async Task ListTitulosAsync_ComFiltros_DeveRepassarFiltrosERetornarTitulosDoRepositorio()
     {
         const string status = "A";
         var vencimento = new DateTime(2026, 7, 10);
@@ -84,7 +84,7 @@ public sealed class TituloBusinessTests
 
         var service = CriarServico();
 
-        var result = await service.ListTitulos(status, vencimento);
+        var result = await service.ListTitulosAsync(status, vencimento);
 
         Assert.Same(titulos, result);
         _tituloRepositoryMock.Verify(
@@ -100,7 +100,7 @@ public sealed class TituloBusinessTests
     [InlineData("")]
     [InlineData("   ")]
     [InlineData("P")]
-    public async Task ListTitulos_ComStatusOpcional_DeveRepassarStatusRecebido(string? status)
+    public async Task ListTitulosAsync_ComStatusOpcional_DeveRepassarStatusRecebido(string? status)
     {
         DateTime? vencimento = null;
 
@@ -110,7 +110,7 @@ public sealed class TituloBusinessTests
 
         var service = CriarServico();
 
-        var result = await service.ListTitulos(status, vencimento);
+        var result = await service.ListTitulosAsync(status, vencimento);
 
         Assert.Empty(result);
         _tituloRepositoryMock.Verify(
@@ -119,7 +119,7 @@ public sealed class TituloBusinessTests
     }
 
     [Fact]
-    public async Task ListTitulos_ComVencimentoNulo_DeveRepassarVencimentoNulo()
+    public async Task ListTitulosAsync_ComVencimentoNulo_DeveRepassarVencimentoNulo()
     {
         const string status = "A";
 
@@ -129,7 +129,7 @@ public sealed class TituloBusinessTests
 
         var service = CriarServico();
 
-        var result = await service.ListTitulos(status, null);
+        var result = await service.ListTitulosAsync(status, null);
 
         Assert.Empty(result);
         _tituloRepositoryMock.Verify(
@@ -138,7 +138,7 @@ public sealed class TituloBusinessTests
     }
 
     [Fact]
-    public async Task CadastrarTitulo_QuandoRepositorioRetornaSucesso_DeveRetornarResposta()
+    public async Task CadastrarTituloAsync_QuandoRepositorioRetornaSucesso_DeveRetornarResposta()
     {
         var request = CriarRequest("Novo titulo");
         var response = CriarResponse(4, request.Titulo);
@@ -149,7 +149,7 @@ public sealed class TituloBusinessTests
 
         var service = CriarServico();
 
-        var result = await service.CadastrarTitulo(request);
+        var result = await service.CadastrarTituloAsync(request);
 
         Assert.Same(response, result);
         _tituloRepositoryMock.Verify(
@@ -158,7 +158,7 @@ public sealed class TituloBusinessTests
     }
 
     [Fact]
-    public async Task CadastrarTitulo_QuandoRepositorioLancaExcecao_DeveRelancarExcecao()
+    public async Task CadastrarTituloAsync_QuandoRepositorioLancaExcecao_DeveRelancarExcecao()
     {
         var request = CriarRequest("Titulo com erro");
         var exception = new InvalidOperationException("Falha no banco");
@@ -169,7 +169,7 @@ public sealed class TituloBusinessTests
 
         var service = CriarServico();
 
-        var result = await Assert.ThrowsAsync<InvalidOperationException>(() => service.CadastrarTitulo(request));
+        var result = await Assert.ThrowsAsync<InvalidOperationException>(() => service.CadastrarTituloAsync(request));
 
         Assert.Same(exception, result);
         _tituloRepositoryMock.Verify(
@@ -178,7 +178,7 @@ public sealed class TituloBusinessTests
     }
 
     [Fact]
-    public async Task AlterarTitulo_QuandoTituloExiste_DeveRetornarResposta()
+    public async Task AlterarTituloAsync_QuandoTituloExiste_DeveRetornarResposta()
     {
         var request = CriarEditExclusao(5, "P");
         var response = CriarResponse(request.IdTitulo, "Titulo alterado");
@@ -189,7 +189,7 @@ public sealed class TituloBusinessTests
 
         var service = CriarServico();
 
-        var result = await service.AlterarTitulo(request);
+        var result = await service.AlterarTituloAsync(request);
 
         Assert.Same(response, result);
         _tituloRepositoryMock.Verify(
@@ -198,7 +198,7 @@ public sealed class TituloBusinessTests
     }
 
     [Fact]
-    public async Task AlterarTitulo_QuandoRepositorioRetornaNull_DeveLancarKeyNotFoundException()
+    public async Task AlterarTituloAsync_QuandoRepositorioRetornaNull_DeveLancarKeyNotFoundException()
     {
         var request = CriarEditExclusao(99, "P");
 
@@ -208,7 +208,7 @@ public sealed class TituloBusinessTests
 
         var service = CriarServico();
 
-        var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => service.AlterarTitulo(request));
+        var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => service.AlterarTituloAsync(request));
 
         Assert.Equal("Titulo com ID 99 não encontrado.", exception.Message);
         _tituloRepositoryMock.Verify(
@@ -219,7 +219,7 @@ public sealed class TituloBusinessTests
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task ApagarTitulo_DeveRetornarResultadoDoRepositorio(bool repositoryResult)
+    public async Task ApagarTituloAsync_DeveRetornarResultadoDoRepositorio(bool repositoryResult)
     {
         var request = CriarEditExclusao(6, "A");
 
@@ -229,7 +229,7 @@ public sealed class TituloBusinessTests
 
         var service = CriarServico();
 
-        var result = await service.ApagarTitulo(request);
+        var result = await service.ApagarTituloAsync(request);
 
         Assert.Equal(repositoryResult, result);
         _tituloRepositoryMock.Verify(
@@ -238,7 +238,7 @@ public sealed class TituloBusinessTests
     }
 
     [Fact]
-    public async Task ApagarTitulo_QuandoRepositorioLancaExcecao_DeveRelancarExcecao()
+    public async Task ApagarTituloAsync_QuandoRepositorioLancaExcecao_DeveRelancarExcecao()
     {
         var request = CriarEditExclusao(7, "A");
         var exception = new InvalidOperationException("Falha ao apagar titulo");
@@ -249,7 +249,7 @@ public sealed class TituloBusinessTests
 
         var service = CriarServico();
 
-        var result = await Assert.ThrowsAsync<InvalidOperationException>(() => service.ApagarTitulo(request));
+        var result = await Assert.ThrowsAsync<InvalidOperationException>(() => service.ApagarTituloAsync(request));
 
         Assert.Same(exception, result);
         _tituloRepositoryMock.Verify(

@@ -11,8 +11,14 @@ namespace Sada.Api.Business
 {
     public class Usuario :IUsuario
     {
+        #region ++ Atributos Globais ++
+
         private readonly ILogger<Usuario> _logger;
         private readonly IUsuarioRepository _usuarioRepository;
+
+        #endregion ++ Atributos Globais ++
+
+        #region ++ Construtor ++
 
         public Usuario(ILogger<Usuario> logger, IUsuarioRepository usuarioRepository)
         {
@@ -20,14 +26,16 @@ namespace Sada.Api.Business
             _usuarioRepository = usuarioRepository;
         }
 
-        public async Task<List<UsuarioModelResponse>> ListUsuarios()
+        #endregion ++ Construtor ++
+
+        public async Task<List<UsuarioModelResponse>> ListUsuariosAsync()
         {
             var listAll = await _usuarioRepository.ListarUsuariosAsync();
             _logger.LogInformation($"Listagem de Registros Cadastrados -  {listAll.Count}. ");
             return listAll;
         }
 
-        public async Task<UsuarioModelResponse> CadastrarUsuario(UsuarioModelRequest model)
+        public async Task<UsuarioModelResponse> CadastrarUsuarioAsync(UsuarioModelRequest model)
         {
             try
             {
@@ -42,7 +50,7 @@ namespace Sada.Api.Business
             }
         }
 
-        public async Task<UsuarioModelResponse?> AlterarUsuario(UsuarioModelRequest model)
+        public async Task<UsuarioModelResponse?> AlterarUsuarioAsync(UsuarioModelRequest model)
         {
             var result = await _usuarioRepository.AlterarUsuarioAsync(model);
             if (result is null)
@@ -54,7 +62,7 @@ namespace Sada.Api.Business
             return result;
         }
 
-        public async Task<bool> ApagarUsuario(int idUsuario)
+        public async Task<bool> ApagarUsuarioAsync(int idUsuario)
         {
             var result = await _usuarioRepository.ApagarUsuarioAsync(idUsuario);
             if (!result)
@@ -66,7 +74,7 @@ namespace Sada.Api.Business
             return result;
         }
 
-        public async Task<UsuarioModelResponse?> ObterUsuarioPorId(int idUsuario)
+        public async Task<UsuarioModelResponse?> ObterUsuarioPorIdAsync(int idUsuario)
         {
             var result = await _usuarioRepository.ObterUsuarioPorIdAsync(idUsuario);
             if (result is null)
@@ -78,9 +86,9 @@ namespace Sada.Api.Business
             return result;
         }
 
-        public async Task<UsuarioModelResponse> LoginUsuario(LoginModelRequest model)
+        public async Task<UsuarioModelResponse> LoginUsuarioAsync(LoginModelRequest model)
         {
-            var result = await _usuarioRepository.LoginUsuario(model);
+            var result = await _usuarioRepository.LoginUsuarioAsync(model);
             if (result is null)
             {
                 _logger.LogWarning($"Login falhou para o usuário: {model.Login}");

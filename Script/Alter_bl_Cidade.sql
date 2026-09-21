@@ -1,0 +1,4 @@
+ALTER TABLE tbl_Cidade
+ADD CONSTRAINT FK_tbl_Cidade__Tbl_Uf
+FOREIGN KEY (ID_UF)
+REFERENCES Tbl_Uf (ID_UF);

@@ -5,15 +5,18 @@ using Sada.Api.Entity.Interface;
 using Sada.Api.Entity.Model;
 using Sada.Api.Entity.Model.Request;
 using Sada.Api.Entity.Model.Response;
-using System.ComponentModel;
 
 namespace Sada.Api.Entity.Repository;
 
 public class UsuarioRepository(SadaDbContext context, ILogger<UsuarioRepository> logger) : IUsuarioRepository
 {
+    #region ++ Atributos Globais ++
+
     private readonly SadaDbContext _context = context;
     private readonly ILogger<UsuarioRepository> _logger = logger;
-    
+
+    #endregion ++ Atributos Globais ++
+
     public async Task<UsuarioModelResponse> IncluirUsuarioAsync(UsuarioModelRequest model, CancellationToken cancellationToken = default)
     {
         var nextId = await _context.Usuarios
@@ -147,7 +150,7 @@ public class UsuarioRepository(SadaDbContext context, ILogger<UsuarioRepository>
         };
     }
 
-    public async Task<UsuarioModelResponse> LoginUsuario(LoginModelRequest model, CancellationToken cancellationToken = default)
+    public async Task<UsuarioModelResponse> LoginUsuarioAsync(LoginModelRequest model, CancellationToken cancellationToken = default)
     {
         var login = model.Login?.Trim();
         var senha = model.Senha?.Trim();

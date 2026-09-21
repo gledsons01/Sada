@@ -9,7 +9,7 @@ namespace Sada.Api.Entity.Model.Request
     public class TituloModelRequest
     {
         [Required]
-        [StringLength(150)]
+        [StringLength(50)]
         [JsonPropertyName("titulo")]
         public string Titulo { get; set; } = string.Empty;
 

@@ -16,13 +16,13 @@ public sealed class TituloControllerTests
     [Theory]
     [InlineData("P")]
     [InlineData("C")]
-    public async Task CadastrarTitulo_ComDadosValidos_DeveCadastrarERetornarCreated(string status)
+    public async Task CadastrarTituloAsync_ComDadosValidos_DeveCadastrarERetornarCreated(string status)
     {
         var request = CriarRequest(status: status);
         var response = CriarResponse(1);
 
         _tituloBusinessMock
-            .Setup(business => business.CadastrarTitulo(request))
+            .Setup(business => business.CadastrarTituloAsync(request))
             .ReturnsAsync(response);
 
         var controller = CriarController();
@@ -30,7 +30,7 @@ public sealed class TituloControllerTests
         var result = await controller.CadastrarTitulo(request);
 
         Assert.IsType<CreatedResult>(result);
-        _tituloBusinessMock.Verify(business => business.CadastrarTitulo(request), Times.Once);
+        _tituloBusinessMock.Verify(business => business.CadastrarTituloAsync(request), Times.Once);
     }
 
     [Theory]
@@ -40,7 +40,7 @@ public sealed class TituloControllerTests
     [InlineData("Descricao", "")]
     [InlineData("Descricao", "A")]
     [InlineData("Descricao", "p")]
-    public async Task CadastrarTitulo_ComDadosInvalidos_DeveRetornarBadRequestSemCadastrar(
+    public async Task CadastrarTituloAsync_ComDadosInvalidos_DeveRetornarBadRequestSemCadastrar(
         string? descricao,
         string? status)
     {
@@ -51,17 +51,17 @@ public sealed class TituloControllerTests
 
         var badRequest = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal("Dados do título inválidos.", badRequest.Value);
-        _tituloBusinessMock.Verify(business => business.CadastrarTitulo(It.IsAny<TituloModelRequest>()), Times.Never);
+        _tituloBusinessMock.Verify(business => business.CadastrarTituloAsync(It.IsAny<TituloModelRequest>()), Times.Never);
     }
 
     [Fact]
-    public async Task CadastrarTitulo_QuandoBusinessLancaExcecao_DeveRelancarExcecao()
+    public async Task CadastrarTituloAsync_QuandoBusinessLancaExcecao_DeveRelancarExcecao()
     {
         var request = CriarRequest();
         var exception = new InvalidOperationException("Falha ao cadastrar titulo");
 
         _tituloBusinessMock
-            .Setup(business => business.CadastrarTitulo(request))
+            .Setup(business => business.CadastrarTituloAsync(request))
             .ThrowsAsync(exception);
 
         var controller = CriarController();
@@ -69,7 +69,7 @@ public sealed class TituloControllerTests
         var result = await Assert.ThrowsAsync<InvalidOperationException>(() => controller.CadastrarTitulo(request));
 
         Assert.Same(exception, result);
-        _tituloBusinessMock.Verify(business => business.CadastrarTitulo(request), Times.Once);
+        _tituloBusinessMock.Verify(business => business.CadastrarTituloAsync(request), Times.Once);
     }
 
     [Fact]
@@ -82,16 +82,16 @@ public sealed class TituloControllerTests
         };
 
         _tituloBusinessMock
-            .Setup(business => business.ListTitulos())
+            .Setup(business => business.ListTitulosAsync())
             .ReturnsAsync(titulos);
 
         var controller = CriarController();
 
-        var result = await controller.ListarTitulos();
+        var result = await controller.ListarTitulosAsync();
 
         var ok = Assert.IsType<OkObjectResult>(result);
         Assert.Same(titulos, ok.Value);
-        _tituloBusinessMock.Verify(business => business.ListTitulos(), Times.Once);
+        _tituloBusinessMock.Verify(business => business.ListTitulosAsync(), Times.Once);
     }
 
     [Fact]
@@ -100,17 +100,17 @@ public sealed class TituloControllerTests
         var titulos = new List<TituloModelResponse>();
 
         _tituloBusinessMock
-            .Setup(business => business.ListTitulos())
+            .Setup(business => business.ListTitulosAsync())
             .ReturnsAsync(titulos);
 
         var controller = CriarController();
 
-        var result = await controller.ListarTitulos();
+        var result = await controller.ListarTitulosAsync();
 
         var ok = Assert.IsType<OkObjectResult>(result);
         var value = Assert.IsAssignableFrom<List<TituloModelResponse>>(ok.Value);
         Assert.Empty(value);
-        _tituloBusinessMock.Verify(business => business.ListTitulos(), Times.Once);
+        _tituloBusinessMock.Verify(business => business.ListTitulosAsync(), Times.Once);
     }
 
     [Fact]
@@ -119,15 +119,15 @@ public sealed class TituloControllerTests
         var exception = new InvalidOperationException("Falha ao listar titulos");
 
         _tituloBusinessMock
-            .Setup(business => business.ListTitulos())
+            .Setup(business => business.ListTitulosAsync())
             .ThrowsAsync(exception);
 
         var controller = CriarController();
 
-        var result = await Assert.ThrowsAsync<InvalidOperationException>(() => controller.ListarTitulos());
+        var result = await Assert.ThrowsAsync<InvalidOperationException>(() => controller.ListarTitulosAsync());
 
         Assert.Same(exception, result);
-        _tituloBusinessMock.Verify(business => business.ListTitulos(), Times.Once);
+        _tituloBusinessMock.Verify(business => business.ListTitulosAsync(), Times.Once);
     }
 
     [Theory]
@@ -140,7 +140,7 @@ public sealed class TituloControllerTests
         var titulos = new List<TituloModelResponse> { CriarResponse(3) };
 
         _tituloBusinessMock
-            .Setup(business => business.ListTitulos(status, vencimento))
+            .Setup(business => business.ListTitulosAsync(status, vencimento))
             .ReturnsAsync(titulos);
 
         var controller = CriarController();
@@ -149,7 +149,7 @@ public sealed class TituloControllerTests
 
         var ok = Assert.IsType<OkObjectResult>(result);
         Assert.Same(titulos, ok.Value);
-        _tituloBusinessMock.Verify(business => business.ListTitulos(status, vencimento), Times.Once);
+        _tituloBusinessMock.Verify(business => business.ListTitulosAsync(status, vencimento), Times.Once);
     }
 
     [Theory]
@@ -170,7 +170,7 @@ public sealed class TituloControllerTests
         var badRequest = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal("ListarTitulosByStatusVencimento() - Dados do Título são inválidos.", badRequest.Value);
         _tituloBusinessMock.Verify(
-            business => business.ListTitulos(It.IsAny<string?>(), It.IsAny<DateTime?>()),
+            business => business.ListTitulosAsync(It.IsAny<string?>(), It.IsAny<DateTime?>()),
             Times.Never);
     }
 
@@ -182,7 +182,7 @@ public sealed class TituloControllerTests
         var exception = new InvalidOperationException("Falha ao listar titulos filtrados");
 
         _tituloBusinessMock
-            .Setup(business => business.ListTitulos("P", vencimento))
+            .Setup(business => business.ListTitulosAsync("P", vencimento))
             .ThrowsAsync(exception);
 
         var controller = CriarController();
@@ -191,19 +191,19 @@ public sealed class TituloControllerTests
             controller.ListarTitulosByStatusVencimento(request));
 
         Assert.Same(exception, result);
-        _tituloBusinessMock.Verify(business => business.ListTitulos("P", vencimento), Times.Once);
+        _tituloBusinessMock.Verify(business => business.ListTitulosAsync("P", vencimento), Times.Once);
     }
 
     [Theory]
     [InlineData("P")]
     [InlineData("C")]
-    public async Task AlterarTitulo_ComDadosValidosERegistroExistente_DeveRetornarOk(string status)
+    public async Task AlterarTituloAsync_ComDadosValidosERegistroExistente_DeveRetornarOk(string status)
     {
         var request = CriarEditExclusao(idTitulo: 10, status: status);
         var response = CriarResponse(request.IdTitulo);
 
         _tituloBusinessMock
-            .Setup(business => business.AlterarTitulo(request))
+            .Setup(business => business.AlterarTituloAsync(request))
             .ReturnsAsync(response);
 
         var controller = CriarController();
@@ -212,16 +212,16 @@ public sealed class TituloControllerTests
 
         var ok = Assert.IsType<OkObjectResult>(result);
         Assert.Same(response, ok.Value);
-        _tituloBusinessMock.Verify(business => business.AlterarTitulo(request), Times.Once);
+        _tituloBusinessMock.Verify(business => business.AlterarTituloAsync(request), Times.Once);
     }
 
     [Fact]
-    public async Task AlterarTitulo_QuandoBusinessRetornaNull_DeveRetornarNotFound()
+    public async Task AlterarTituloAsync_QuandoBusinessRetornaNull_DeveRetornarNotFound()
     {
         var request = CriarEditExclusao(idTitulo: 11);
 
         _tituloBusinessMock
-            .Setup(business => business.AlterarTitulo(request))
+            .Setup(business => business.AlterarTituloAsync(request))
             .ReturnsAsync((TituloModelResponse)null!);
 
         var controller = CriarController();
@@ -230,7 +230,7 @@ public sealed class TituloControllerTests
 
         var notFound = Assert.IsType<NotFoundObjectResult>(result);
         Assert.Null(notFound.Value);
-        _tituloBusinessMock.Verify(business => business.AlterarTitulo(request), Times.Once);
+        _tituloBusinessMock.Verify(business => business.AlterarTituloAsync(request), Times.Once);
     }
 
     [Theory]
@@ -239,7 +239,7 @@ public sealed class TituloControllerTests
     [InlineData("A", "2026-07-10")]
     [InlineData("p", "2026-07-10")]
     [InlineData("P", null)]
-    public async Task AlterarTitulo_ComDadosInvalidos_DeveRetornarBadRequestSemAlterar(
+    public async Task AlterarTituloAsync_ComDadosInvalidos_DeveRetornarBadRequestSemAlterar(
         string? status,
         string? vencimentoText)
     {
@@ -251,18 +251,18 @@ public sealed class TituloControllerTests
         var badRequest = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal("AlterarTitulo() - Dados do Título são inválidos.", badRequest.Value);
         _tituloBusinessMock.Verify(
-            business => business.AlterarTitulo(It.IsAny<TituloModelEditExclusao>()),
+            business => business.AlterarTituloAsync(It.IsAny<TituloModelEditExclusao>()),
             Times.Never);
     }
 
     [Fact]
-    public async Task AlterarTitulo_QuandoBusinessLancaExcecao_DeveRelancarExcecao()
+    public async Task AlterarTituloAsync_QuandoBusinessLancaExcecao_DeveRelancarExcecao()
     {
         var request = CriarEditExclusao();
         var exception = new InvalidOperationException("Falha ao alterar titulo");
 
         _tituloBusinessMock
-            .Setup(business => business.AlterarTitulo(request))
+            .Setup(business => business.AlterarTituloAsync(request))
             .ThrowsAsync(exception);
 
         var controller = CriarController();
@@ -270,18 +270,18 @@ public sealed class TituloControllerTests
         var result = await Assert.ThrowsAsync<InvalidOperationException>(() => controller.AlterarTitulo(request));
 
         Assert.Same(exception, result);
-        _tituloBusinessMock.Verify(business => business.AlterarTitulo(request), Times.Once);
+        _tituloBusinessMock.Verify(business => business.AlterarTituloAsync(request), Times.Once);
     }
 
     [Theory]
     [InlineData("P")]
     [InlineData("C")]
-    public async Task ApagarTitulo_ComDadosValidosERegistroExistente_DeveRetornarOk(string status)
+    public async Task ApagarTituloAsync_ComDadosValidosERegistroExistente_DeveRetornarOk(string status)
     {
         var request = CriarEditExclusao(idTitulo: 12, status: status);
 
         _tituloBusinessMock
-            .Setup(business => business.ApagarTitulo(request))
+            .Setup(business => business.ApagarTituloAsync(request))
             .ReturnsAsync(true);
 
         var controller = CriarController();
@@ -290,16 +290,16 @@ public sealed class TituloControllerTests
 
         var ok = Assert.IsType<OkObjectResult>(result);
         Assert.True((bool)ok.Value!);
-        _tituloBusinessMock.Verify(business => business.ApagarTitulo(request), Times.Once);
+        _tituloBusinessMock.Verify(business => business.ApagarTituloAsync(request), Times.Once);
     }
 
     [Fact]
-    public async Task ApagarTitulo_QuandoBusinessRetornaFalse_DeveRetornarNotFound()
+    public async Task ApagarTituloAsync_QuandoBusinessRetornaFalse_DeveRetornarNotFound()
     {
         var request = CriarEditExclusao(idTitulo: 13);
 
         _tituloBusinessMock
-            .Setup(business => business.ApagarTitulo(request))
+            .Setup(business => business.ApagarTituloAsync(request))
             .ReturnsAsync(false);
 
         var controller = CriarController();
@@ -308,7 +308,7 @@ public sealed class TituloControllerTests
 
         var notFound = Assert.IsType<NotFoundObjectResult>(result);
         Assert.Equal("ApagarTitulo() - Registro não encontrado.", notFound.Value);
-        _tituloBusinessMock.Verify(business => business.ApagarTitulo(request), Times.Once);
+        _tituloBusinessMock.Verify(business => business.ApagarTituloAsync(request), Times.Once);
     }
 
     [Theory]
@@ -317,7 +317,7 @@ public sealed class TituloControllerTests
     [InlineData("A", "2026-07-10")]
     [InlineData("p", "2026-07-10")]
     [InlineData("P", null)]
-    public async Task ApagarTitulo_ComDadosInvalidos_DeveRetornarBadRequestSemApagar(
+    public async Task ApagarTituloAsync_ComDadosInvalidos_DeveRetornarBadRequestSemApagar(
         string? status,
         string? vencimentoText)
     {
@@ -329,18 +329,18 @@ public sealed class TituloControllerTests
         var badRequest = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal("ApagarTitulo() - Dados do Título são inválidos.", badRequest.Value);
         _tituloBusinessMock.Verify(
-            business => business.ApagarTitulo(It.IsAny<TituloModelEditExclusao>()),
+            business => business.ApagarTituloAsync(It.IsAny<TituloModelEditExclusao>()),
             Times.Never);
     }
 
     [Fact]
-    public async Task ApagarTitulo_QuandoBusinessLancaExcecao_DeveRelancarExcecao()
+    public async Task ApagarTituloAsync_QuandoBusinessLancaExcecao_DeveRelancarExcecao()
     {
         var request = CriarEditExclusao();
         var exception = new InvalidOperationException("Falha ao apagar titulo");
 
         _tituloBusinessMock
-            .Setup(business => business.ApagarTitulo(request))
+            .Setup(business => business.ApagarTituloAsync(request))
             .ThrowsAsync(exception);
 
         var controller = CriarController();
@@ -348,7 +348,7 @@ public sealed class TituloControllerTests
         var result = await Assert.ThrowsAsync<InvalidOperationException>(() => controller.ApagarTitulo(request));
 
         Assert.Same(exception, result);
-        _tituloBusinessMock.Verify(business => business.ApagarTitulo(request), Times.Once);
+        _tituloBusinessMock.Verify(business => business.ApagarTituloAsync(request), Times.Once);
     }
 
     [Fact]

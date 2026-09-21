@@ -10,10 +10,16 @@ namespace Sada.Application.Controllers
     [Route("usuario")]
     public class UsuarioController : Controller
     {
+        #region ++ Atributos Globais ++
+
         private readonly IUsuario _usuarioBusiness;
         private readonly IJwtTokenService _jwtTokenService;
         private readonly ICacheService _cacheService;
         private readonly ILogger<UsuarioController> _logger;
+
+        #endregion ++ Atributos Globais ++
+
+        #region ++ Construtor ++
 
         public UsuarioController(ILogger<UsuarioController> logger, IUsuario usuarioBusiness, IJwtTokenService jwtTokenService, ICacheService cacheService)
         {
@@ -23,28 +29,14 @@ namespace Sada.Application.Controllers
             _cacheService = cacheService;
         }
 
-        [HttpPost("cadastrar")]
-        [ProducesResponseType(typeof(UsuarioModelResponse), 200)]
-        public async Task<IActionResult> CadastrarUsuario([FromBody] UsuarioModelRequest usuarioModelRequest)
-        {
-            try
-            {
-                var result = await _usuarioBusiness.CadastrarUsuario(usuarioModelRequest);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao cadastrar usuario");
-                return StatusCode(500, "Ocorreu um erro ao processar a solicitacao.");
-            }
-        }
+        #endregion ++ Construtor ++
 
         [HttpGet("listar-usuarios")]
-        public async Task<IActionResult> ListarUsuarios()
+        public async Task<IActionResult> ListarUsuariosAsync()
         {
             try
             {
-                var result = await _usuarioBusiness.ListUsuarios();
+                var result = await _usuarioBusiness.ListUsuariosAsync();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -55,11 +47,11 @@ namespace Sada.Application.Controllers
         }
 
         [HttpGet("listar-usuario/{id}")]
-        public async Task<IActionResult> ObterUsuarioPorId(int id)
+        public async Task<IActionResult> ObterUsuarioPorIdAsync(int id)
         {
             try
             {
-                var result = await _usuarioBusiness.ObterUsuarioPorId(id);
+                var result = await _usuarioBusiness.ObterUsuarioPorIdAsync(id);
                 if (result == null)
                 {
                     return NotFound($"Usuario com ID {id} nao encontrado.");
@@ -68,17 +60,33 @@ namespace Sada.Application.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Erro ao obter usuario com ID {id}");
+                _logger.LogError(ex, $"Erro ao obter usuario com ID {id}.");
                 return StatusCode(500, "Ocorreu um erro ao processar a solicitacao.");
             }
         }
 
-        [HttpPut("alterar-usuario")]
-        public async Task<IActionResult> AlterarUsuario([FromBody] UsuarioModelRequest usuarioModelRequest)
+        [HttpPost("cadastrar")]
+        [ProducesResponseType(typeof(UsuarioModelResponse), 200)]
+        public async Task<IActionResult> CadastrarUsuarioAsync([FromBody] UsuarioModelRequest usuarioModelRequest)
         {
             try
             {
-                var result = await _usuarioBusiness.AlterarUsuario(usuarioModelRequest);
+                var result = await _usuarioBusiness.CadastrarUsuarioAsync(usuarioModelRequest);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao cadastrar usuario");
+                return StatusCode(500, "Ocorreu um erro ao processar a solicitacao.");
+            }
+        }        
+
+        [HttpPut("alterar-usuario")]
+        public async Task<IActionResult> AlterarUsuarioAsync([FromBody] UsuarioModelRequest usuarioModelRequest)
+        {
+            try
+            {
+                var result = await _usuarioBusiness.AlterarUsuarioAsync(usuarioModelRequest);
                 if (result == null)
                 {
                     return NotFound($"Usuario com ID {usuarioModelRequest.IdUsuario} nao encontrado.");
@@ -93,11 +101,11 @@ namespace Sada.Application.Controllers
         }
 
         [HttpDelete("apagar-usuario/{id}")]
-        public async Task<IActionResult> ApagarUsuario(int id)
+        public async Task<IActionResult> ApagarUsuarioAsync(int id)
         {
             try
             {
-                var result = await _usuarioBusiness.ApagarUsuario(id);
+                var result = await _usuarioBusiness.ApagarUsuarioAsync(id);
                 if (!result)
                 {
                     return NotFound($"Usuario com ID {id} nao encontrado.");
@@ -106,13 +114,13 @@ namespace Sada.Application.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Erro ao apagar usuario com ID {id}");
+                _logger.LogError(ex, $"Erro ao apagar usuario com ID: {id}");
                 return StatusCode(500, "Ocorreu um erro ao processar a solicitacao.");
             }
         }
 
         [HttpPost("login-usuario")]
-        public async Task<IActionResult> LoginUsuario([FromQuery] string email, [FromQuery] string senha)
+        public async Task<IActionResult> LoginUsuarioAsync([FromQuery] string email, [FromQuery] string senha)
         {
             try
             {
@@ -126,7 +134,7 @@ namespace Sada.Application.Controllers
                 model.Login = email;
                 model.Senha = senha;
 
-                var result = await _usuarioBusiness.LoginUsuario(model);
+                var result = await _usuarioBusiness.LoginUsuarioAsync(model);
                 if (result == null)
                 {
                     _logger.LogWarning("LoginUsuario() - Usuario nao encontrado.");

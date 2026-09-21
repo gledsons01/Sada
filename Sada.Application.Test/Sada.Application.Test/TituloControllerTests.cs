@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Moq;
 using Sada.Api.Business.Interface;
 using Sada.Api.Entity.Model.Request;
 using Sada.Api.Entity.Model.Response;
@@ -66,12 +67,71 @@ public sealed class TituloControllerTests
         var logger = new TestLogger<TituloController>();
         var controller = CriarController(business, logger);
 
-        var result = await controller.ListarTitulos();
+        var result = await controller.ListarTitulosAsync();
 
         var ok = Assert.IsType<OkObjectResult>(result);
         Assert.Same(expected, ok.Value);
         Assert.Equal(1, business.ListTitulosCalls);
         Assert.Contains(logger.Entries, item => item.Level == LogLevel.Information);
+    }
+
+    [Fact]
+    public async Task ObterTituloAsync_QuandoExiste_DeveRepassarIdRetornarOkERegistrarSucesso()
+    {
+        var expected = CriarResponse(7);
+        var business = new Mock<ITitulo>(MockBehavior.Strict);
+        var logger = new Mock<ILogger<TituloController>>();
+        business.Setup(x => x.ObterTituloPorIdAsync(7)).ReturnsAsync(expected);
+        var controller = new TituloController(logger.Object, business.Object);
+
+        var result = await controller.ObterTituloAsync(7);
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        Assert.Same(expected, ok.Value);
+        business.Verify(x => x.ObterTituloPorIdAsync(7), Times.Once);
+        VerificarLogMoq(logger, LogLevel.Information, "Título localizado 7.");
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(999)]
+    public async Task ObterTituloAsync_QuandoNaoExiste_DeveRetornar404ERegistrarAviso(int id)
+    {
+        var business = new Mock<ITitulo>(MockBehavior.Strict);
+        var logger = new Mock<ILogger<TituloController>>();
+        business.Setup(x => x.ObterTituloPorIdAsync(id)).ReturnsAsync((TituloModelResponse?)null);
+        var controller = new TituloController(logger.Object, business.Object);
+
+        var result = await controller.ObterTituloAsync(id);
+
+        var notFound = Assert.IsType<NotFoundObjectResult>(result);
+        Assert.Equal($"Título não encontrado {id}.", notFound.Value);
+        business.Verify(x => x.ObterTituloPorIdAsync(id), Times.Once);
+        VerificarLogMoq(logger, LogLevel.Warning, $"Título não encontrado {id}.");
+    }
+
+    [Fact]
+    public async Task ObterTituloAsync_QuandoBusinessFalha_DevePropagarExcecaoSemRegistrarLog()
+    {
+        var expected = new InvalidOperationException("Falha ao obter titulo");
+        var business = new Mock<ITitulo>(MockBehavior.Strict);
+        var logger = new Mock<ILogger<TituloController>>();
+        business.Setup(x => x.ObterTituloPorIdAsync(7)).ThrowsAsync(expected);
+        var controller = new TituloController(logger.Object, business.Object);
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            controller.ObterTituloAsync(7));
+
+        Assert.Same(expected, exception);
+        business.Verify(x => x.ObterTituloPorIdAsync(7), Times.Once);
+        logger.Verify(x => x.Log(
+                It.IsAny<LogLevel>(),
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                It.IsAny<Exception?>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Never);
     }
 
     [Fact]
@@ -307,16 +367,33 @@ public sealed class TituloControllerTests
         };
     }
 
+    private static void VerificarLogMoq(
+        Mock<ILogger<TituloController>> logger,
+        LogLevel level,
+        string mensagem)
+    {
+        logger.Verify(x => x.Log(
+                level,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((state, _) =>
+                    state.ToString() != null && state.ToString()!.Contains(mensagem)),
+                It.IsAny<Exception?>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
+
     private sealed class FakeTituloBusiness : ITitulo
     {
         public List<TituloModelResponse> ListTitulosResult { get; set; } = [];
         public List<TituloModelResponse> ListTitulosFilteredResult { get; set; } = [];
         public TituloModelResponse CadastrarTituloResult { get; set; } = new();
+        public TituloModelResponse? ObterTituloResult { get; set; }
         public TituloModelResponse? AlterarTituloResult { get; set; } = new();
         public bool ApagarTituloResult { get; set; }
         public int ListTitulosCalls { get; private set; }
         public int ListTitulosFilteredCalls { get; private set; }
         public int CadastrarTituloCalls { get; private set; }
+        public int ObterTituloCalls { get; private set; }
         public int AlterarTituloCalls { get; private set; }
         public int ApagarTituloCalls { get; private set; }
         public string? LastStatus { get; private set; }
@@ -325,13 +402,13 @@ public sealed class TituloControllerTests
         public TituloModelEditExclusao? LastEditRequest { get; private set; }
         public TituloModelEditExclusao? LastDeleteRequest { get; private set; }
 
-        public Task<List<TituloModelResponse>> ListTitulos()
+        public Task<List<TituloModelResponse>> ListTitulosAsync()
         {
             ListTitulosCalls++;
             return Task.FromResult(ListTitulosResult);
         }
 
-        public Task<List<TituloModelResponse>> ListTitulos(string? status, DateTime? vencimento)
+        public Task<List<TituloModelResponse>> ListTitulosAsync(string? status, DateTime? vencimento)
         {
             ListTitulosFilteredCalls++;
             LastStatus = status;
@@ -339,21 +416,27 @@ public sealed class TituloControllerTests
             return Task.FromResult(ListTitulosFilteredResult);
         }
 
-        public Task<TituloModelResponse> CadastrarTitulo(TituloModelRequest model)
+        public Task<TituloModelResponse?> ObterTituloPorIdAsync(int idTitulo)
+        {
+            ObterTituloCalls++;
+            return Task.FromResult(ObterTituloResult);
+        }
+
+        public Task<TituloModelResponse> CadastrarTituloAsync(TituloModelRequest model)
         {
             CadastrarTituloCalls++;
             LastRequest = model;
             return Task.FromResult(CadastrarTituloResult);
         }
 
-        public Task<TituloModelResponse> AlterarTitulo(TituloModelEditExclusao model)
+        public Task<TituloModelResponse> AlterarTituloAsync(TituloModelEditExclusao model)
         {
             AlterarTituloCalls++;
             LastEditRequest = model;
             return Task.FromResult(AlterarTituloResult!);
         }
 
-        public Task<bool> ApagarTitulo(TituloModelEditExclusao model)
+        public Task<bool> ApagarTituloAsync(TituloModelEditExclusao model)
         {
             ApagarTituloCalls++;
             LastDeleteRequest = model;
