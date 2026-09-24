@@ -75,15 +75,11 @@ public class Sexo : ISexo
         if (!sexoExcluido)
         {
             _logger.LogWarning(
-                "Sexo com ID {IdSexo} não encontrado para exclusão.",
-                idSexo);
-            throw new KeyNotFoundException(
-                $"Sexo com ID {idSexo} não encontrado para exclusão.");
+                "Sexo com ID {IdSexo} não encontrado para exclusão.", idSexo);
+            throw new KeyNotFoundException($"Sexo com ID {idSexo} não encontrado para exclusão.");
         }
 
-        _logger.LogInformation(
-            "Sexo com ID {IdSexo} excluído com sucesso.",
-            idSexo);
+        _logger.LogInformation("Sexo com ID {IdSexo} excluído com sucesso.", idSexo);
 
         return true;
     }

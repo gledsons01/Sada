@@ -3,12 +3,6 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Sexo, SexoService } from '../../sexo.service';
 
-// interface Sexo {
-//   idsexo: number;
-//   descricao: string;
-//   sigla: string;
-// }
-
 @Component({
   selector: 'app-sexo-lista',
   standalone: true,
@@ -62,36 +56,29 @@ export class SexoListaComponent implements OnInit {
   }
 
   salvar(): void {
-    //this.sexoEmEdicao.datavencimento = this.dataVencimentoTexto;
-    const descricao = this.sexoEmEdicao.descricao.trim();
-    const sigla = this.sexoEmEdicao.sigla.trim();
-    
-    if (!descricao) {
-        console.log('Descrição deve ser preenchida !!!');
-        return;
-    }
+    const sexoParaSalvar: Sexo = {
+      ...this.sexoEmEdicao,
+      idsexo: Number(this.sexoEmEdicao.idsexo ?? 0),
+      descricao: (this.sexoEmEdicao.descricao ?? '').trim(),
+      sigla: (this.sexoEmEdicao.sigla ?? '').trim()
+    };
 
-    if (this.editando) {
-      const indice = this.sexos.findIndex(
-        sexo => sexo.idsexo === this.sexoEmEdicao.idsexo
-      );
+    this.carregando = true;
+    this.mensagemErro = '';
 
-      if (indice >= 0) {
-        this.sexos[indice] = { ...this.sexoEmEdicao, descricao };
+    this.sexoService.salvar(sexoParaSalvar).subscribe({
+      next: () => {
+        this.fecharModal();
+        this.carregarSexos();
+      },
+      error: (erro) => {
+        console.error('Erro ao salvar sexo:', erro);
+        this.mensagemErro = erro.error?.message ?? erro.message ??
+          'Não foi possível salvar o tipo de sexo.';
+        this.carregando = false;
       }
-    } else {
-      this.sexos.push({
-        ...this.sexoEmEdicao,
-        idsexo: this.proximoId(),
-        descricao
-      });
-    }
-
-    console.log('Título salvo:', this.sexoEmEdicao);
-    console.log('Lista de tipos de sexos atualizada:', this.sexos);
-    this.fecharModal();
+    });
   }
-
   excluir(sexo: Sexo): void { 
     this.sexos = this.sexos.filter((item) => item.idsexo !== sexo.idsexo);
     }
@@ -104,7 +91,4 @@ export class SexoListaComponent implements OnInit {
     return { idsexo: 0, descricao: '', sigla: ''};
   }
 
-  private proximoId(): number {
-        return Math.max(0, ...this.sexos.map((sexo) => sexo.idsexo)) + 1;
-    }
 }

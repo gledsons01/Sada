@@ -15,6 +15,7 @@
         <th>Id</th>
         <th>Sexo</th>
         <th>Sigla</th>
+        <th>Ação</th>
       </tr>
     </thead>
     <tbody>
@@ -43,13 +44,16 @@
 
     <form #formsexo="ngForm" (ngSubmit)="salvar()">
 
+      <div>
+        <input type="hidden" id="idsexo" name="idsexo" [(ngModel)]="sexoEmEdicao.idsexo">
+      </div>
       <div class="campo">
-        <label for="descricaosexo">Sexo: </label>
+        <label for="descricao">Sexo: </label>
         <input id="descricao" name="descricao" [(ngModel)]="sexoEmEdicao.descricao" required maxlength="30">
       </div>
 
       <div class="campo">
-        <label for="siglasexo">Sigla: </label>
+        <label for="sigla">Sigla: </label>
         <input type="text" id="sigla" name="sigla" [(ngModel)]="sexoEmEdicao.sigla" required maxlength="02">
       </div>
 
