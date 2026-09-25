@@ -79,10 +79,20 @@ export class SexoListaComponent implements OnInit {
       }
     });
   }
-  excluir(sexo: Sexo): void { 
-    this.sexos = this.sexos.filter((item) => item.idsexo !== sexo.idsexo);
-    }
+  excluir(sexo: Sexo): void {
+    this.mensagemErro = '';
 
+    this.sexoService.excluir(sexo.idsexo).subscribe({
+      next: () => {
+        this.carregarSexos();
+      },
+      error: (erro) => {
+        console.error('Erro ao excluir sexo:', erro);
+        this.mensagemErro = erro.error?.message ?? erro.message ??
+          'Não foi possível excluir o tipo de sexo.';
+      }
+    });
+  }
   fecharModal(): void {
         this.modalAberta = false;
     }

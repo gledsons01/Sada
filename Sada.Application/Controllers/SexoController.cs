@@ -84,7 +84,7 @@ namespace Sada.Application.Controllers
             }
         }
 
-        [HttpPatch("alterar-sexo")]
+        [HttpPut("alterar-sexo")]
         public async Task<IActionResult> AlterSexoAsync([FromBody] SexoModelRequest modelRequest)
         {
             try
@@ -107,7 +107,7 @@ namespace Sada.Application.Controllers
             }
         }
 
-        [HttpDelete("deletar-sexo")]
+        [HttpDelete("deletar-sexo/{id}")]
         public async Task<IActionResult> ApagarSexoAsync(int id)
         {
             try
